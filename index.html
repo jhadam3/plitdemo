@@ -1,0 +1,682 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0A0D12;--bg2:#0F1520;--bg3:#141C2A;--card:#182030;
+--green:#00D395;--green2:#00B07A;--blue:#3B82F6;--purple:#7C3AED;--gold:#F59E0B;
+--text:#F1F5F9;--text2:#94A3B8;--text3:#475569;
+--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
+.app{display:flex;height:640px;overflow:hidden;position:relative}
+
+/* MODAL OVERLAY */
+.modal-overlay{
+  display:none;
+  position:absolute;
+  inset:0;
+  background:rgba(5,8,14,0.88);
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  animation:fadeIn .2s ease;
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  width:88%;
+  height:92%;
+  background:var(--bg2);
+  border:1px solid rgba(245,158,11,.25);
+  border-radius:16px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  animation:slideUp .25s ease;
+}
+.modal-header{
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-shrink:0;
+  background:var(--bg3);
+}
+.modal-close{
+  width:28px;height:28px;border-radius:7px;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--border2);
+  color:var(--text2);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+  transition:all .18s;
+}
+.modal-close:hover{background:rgba(255,255,255,.12);color:var(--text)}
+.modal-body{flex:1;overflow:hidden;position:relative}
+.modal-body iframe{width:100%;height:100%;border:none;display:block}
+
+/* PDF FALLBACK */
+.pdf-fallback{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;background:var(--bg3);padding:24px;
+}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+
+/* SIDEBAR */
+.sidebar{width:196px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:18px 0;flex-shrink:0}
+.logo-wrap{padding:0 18px 16px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.logo-text{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px}
+.logo-text span{color:var(--green)}
+.logo-sub{font-size:10px;color:var(--text3);margin-top:1px;letter-spacing:1px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all .18s}
+.nav-item:hover{background:rgba(255,255,255,.03);color:var(--text)}
+.nav-item.active{background:rgba(0,211,149,.08);color:var(--green);border-left-color:var(--green)}
+.nav-ic{font-style:normal;font-size:13px;width:15px;flex-shrink:0}
+
+/* BC SIDEBAR BUTTON */
+.bc-btn{
+  margin:0 12px 14px;
+  background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(245,158,11,.08));
+  border:1px solid rgba(245,158,11,.3);
+  border-radius:10px;
+  padding:11px 12px;
+  cursor:pointer;
+  transition:all .22s;
+  display:flex;align-items:center;gap:10px;
+}
+.bc-btn:hover{background:linear-gradient(135deg,rgba(245,158,11,.25),rgba(245,158,11,.14));border-color:rgba(245,158,11,.5);transform:translateY(-1px)}
+.bc-btn:active{transform:scale(.98)}
+.bc-icon{width:34px;height:34px;background:rgba(245,158,11,.18);border:1px solid rgba(245,158,11,.35);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.bc-pulse{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse .9s infinite;flex-shrink:0}
+
+/* REST */
+.topbar{height:50px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:10px;flex-shrink:0}
+.search{flex:1;max-width:260px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px}
+.wallet{background:rgba(0,211,149,.1);border:1px solid rgba(0,211,149,.22);border-radius:20px;padding:4px 11px;font-size:12px;color:var(--green);font-weight:500}
+.notif{width:30px;height:30px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;position:relative;cursor:pointer}
+.ndot{position:absolute;top:4px;right:4px;width:5px;height:5px;background:var(--green);border-radius:50%}
+.av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.content{flex:1;overflow-y:auto}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.screen{display:none}.screen.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.bg{background:rgba(0,211,149,.13);color:var(--green);border:1px solid rgba(0,211,149,.22)}
+.bb{background:rgba(59,130,246,.13);color:#60A5FA;border:1px solid rgba(59,130,246,.22)}
+.bp{background:rgba(124,58,237,.13);color:#A78BFA;border:1px solid rgba(124,58,237,.22)}
+.ba{background:rgba(245,158,11,.13);color:#FCD34D;border:1px solid rgba(245,158,11,.22)}
+.pb{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.pf{height:100%;border-radius:2px}
+.pg{background:var(--green)}.pbl{background:var(--blue)}.ppu{background:var(--purple)}
+.btn{border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--green);color:#0A0D12}.btn-p:hover{background:var(--green2)}
+.btn-o{background:transparent;color:var(--green);border:1px solid rgba(0,211,149,.35)}.btn-o:hover{background:rgba(0,211,149,.08)}
+.btn-gh{background:transparent;color:var(--text2);border:1px solid var(--border)}.btn-gh:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.btn-gold{background:rgba(245,158,11,.15);color:#FCD34D;border:1px solid rgba(245,158,11,.35)}.btn-gold:hover{background:rgba(245,158,11,.25)}
+.btn-sm{padding:4px 9px;font-size:11px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.sl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;font-weight:600}
+.sv{font-size:21px;font-family:'Space Grotesk',sans-serif;font-weight:700}
+.sc{font-size:11px;color:var(--green);margin-top:2px}
+.roi{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:800;color:var(--green)}
+.div{height:1px;background:var(--border);margin:11px 0}
+.inp{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;width:100%;outline:none}
+.inp:focus{border-color:rgba(0,211,149,.5)}
+.tr{display:grid;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
+.tr:last-child{border-bottom:none}
+.tab-bar{display:flex;gap:0;background:var(--bg3);border-radius:8px;padding:2px;margin-bottom:14px}
+.tab{flex:1;padding:5px 6px;border-radius:6px;font-size:11px;color:var(--text3);cursor:pointer;text-align:center;transition:all .18s}
+.tab.active{background:var(--card);color:var(--text)}
+.chip{padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;transition:all .18s;border:1px solid var(--border);color:var(--text2)}
+.chip:hover,.chip.active{background:rgba(0,211,149,.09);border-color:var(--green);color:var(--green)}
+.fs{display:none}.fs.active{display:block}
+.sd{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.sd-done{background:var(--green);color:#0A0D12}
+.sd-active{background:rgba(0,211,149,.18);border:1px solid var(--green);color:var(--green)}
+.sd-todo{background:var(--bg3);border:1px solid var(--border);color:var(--text3)}
+.sl-line{flex:1;height:1px;background:var(--border)}
+.sl-done{background:var(--green)}
+.admt{width:100%;border-collapse:collapse;font-size:11px}
+.admt th{text-align:left;padding:7px 9px;color:var(--text3);font-weight:500;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase}
+.admt td{padding:7px 9px;border-bottom:1px solid var(--border);color:var(--text2)}
+</style>
+
+<div class="app">
+
+  <!-- ===== MODAL BUSINESS CASE ===== -->
+  <div class="modal-overlay" id="bc-modal" onclick="closeBCModal(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:30px;height:30px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px">📄</div>
+          <div>
+            <div style="font-size:13px;font-weight:600">Business Case — PLIT</div>
+            <div style="font-size:10px;color:var(--text3)">Plataforma de tokenización inmobiliaria · 2025</div>
+          </div>
+          <span class="badge ba" style="margin-left:6px">Confidencial</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px">
+          <a href="BC.pdf" download style="text-decoration:none">
+            <button class="btn btn-gold btn-sm" style="display:flex;align-items:center;gap:5px">⬇ Descargar</button>
+          </a>
+          <a href="BC.pdf" target="_blank" style="text-decoration:none">
+            <button class="btn btn-gh btn-sm">↗ Nueva pestaña</button>
+          </a>
+          <div class="modal-close" onclick="closeBCModal()">✕</div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <iframe src="BC.pdf" id="bc-iframe"></iframe>
+        <!-- fallback visual si no hay PDF -->
+        <div class="pdf-fallback" id="bc-fallback" style="display:none">
+          <div style="width:60px;height:60px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.28);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px">📄</div>
+          <div style="text-align:center">
+            <div style="font-size:14px;font-weight:600;margin-bottom:5px">Business Case PLIT</div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:16px">El PDF se visualiza cuando el archivo BC.pdf<br>está publicado en el mismo servidor</div>
+            <div style="display:flex;gap:8px;justify-content:center">
+              <a href="BC.pdf" download style="text-decoration:none"><button class="btn btn-gold">⬇ Descargar PDF</button></a>
+              <a href="BC.pdf" target="_blank" style="text-decoration:none"><button class="btn btn-gh">↗ Abrir en nueva pestaña</button></a>
+            </div>
+          </div>
+          <div style="width:100%;max-width:460px">
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;text-align:center">Contenido del documento</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:10px">
+                <div style="width:24px;height:24px;background:rgba(0,211,149,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--green);font-weight:700;flex-shrink:0">01</div>
+                <div><div style="font-size:12px;font-weight:500">Resumen Ejecutivo</div><div style="font-size:10px;color:var(--text3)">Propuesta de valor y oportunidad de mercado</div></div>
+              </div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:10px">
+                <div style="width:24px;height:24px;background:rgba(59,130,246,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#60A5FA;font-weight:700;flex-shrink:0">02</div>
+                <div><div style="font-size:12px;font-weight:500">Modelo de Negocio</div><div style="font-size:10px;color:var(--text3)">Tokenización, flujos y estructura legal</div></div>
+              </div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:10px">
+                <div style="width:24px;height:24px;background:rgba(124,58,237,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#A78BFA;font-weight:700;flex-shrink:0">03</div>
+                <div><div style="font-size:12px;font-weight:500">Proyecciones Financieras</div><div style="font-size:10px;color:var(--text3)">ROI, métricas clave y escenarios</div></div>
+              </div>
+              <div style="background:var(--card);border:1px solid var(--border);border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:10px">
+                <div style="width:24px;height:24px;background:rgba(245,158,11,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#FCD34D;font-weight:700;flex-shrink:0">04</div>
+                <div><div style="font-size:12px;font-weight:500">Roadmap y Equipo</div><div style="font-size:10px;color:var(--text3)">Plan de ejecución y perfiles clave</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo-wrap">
+      <div class="logo-text">PL<span>IT</span></div>
+      <div class="logo-sub">Real Estate · Tokenized</div>
+    </div>
+    <div class="nav-item" id="nv-home" onclick="go('home')"><i class="nav-ic">⬡</i> Landing</div>
+    <div class="nav-item" id="nv-login" onclick="go('login')"><i class="nav-ic">◎</i> Login / Signup</div>
+    <div class="nav-item active" id="nv-dashboard" onclick="go('dashboard')"><i class="nav-ic">▦</i> Dashboard</div>
+    <div class="nav-item" id="nv-explore" onclick="go('explore')"><i class="nav-ic">◈</i> Explorar</div>
+    <div class="nav-item" id="nv-property" onclick="go('property')"><i class="nav-ic">◇</i> Propiedad</div>
+    <div class="nav-item" id="nv-invest" onclick="go('invest')"><i class="nav-ic">◉</i> Invertir</div>
+    <div class="nav-item" id="nv-portfolio" onclick="go('portfolio')"><i class="nav-ic">△</i> Portafolio</div>
+    <div class="nav-item" id="nv-upload" onclick="go('upload')"><i class="nav-ic">⊕</i> Subir prop.</div>
+    <div class="nav-item" id="nv-admin" onclick="go('admin')"><i class="nav-ic">⚙</i> Admin</div>
+
+    <div style="flex:1"></div>
+
+    <!-- BC BUTTON EN SIDEBAR -->
+    <div class="bc-btn" onclick="openBCModal()">
+      <div class="bc-icon">📄</div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600;color:#FCD34D;line-height:1.2">Business Case</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px">Ver presentación</div>
+      </div>
+      <div class="bc-pulse"></div>
+    </div>
+
+    <div style="padding:10px 18px;border-top:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="av">AR</div>
+        <div><div style="font-size:12px;font-weight:500">Ana R.</div><div style="font-size:10px;color:var(--text3)">Inversor Pro</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="search"><span style="font-size:11px">⌕</span><span>Buscar propiedades, tokens...</span></div>
+      <div style="flex:1"></div>
+      <div class="notif">🔔<div class="ndot"></div></div>
+      <div class="wallet">◈ $248,500 MXN</div>
+      <div class="av">AR</div>
+    </div>
+
+    <div class="content">
+
+<!-- HOME -->
+<div class="screen" id="screen-home">
+  <div style="background:var(--bg2);padding:0;position:relative;overflow:hidden;border-bottom:1px solid var(--border)">
+    <svg style="position:absolute;bottom:0;left:0;width:100%;height:180px;opacity:.15" viewBox="0 0 800 180" preserveAspectRatio="none">
+      <rect x="0" y="100" width="40" height="80" fill="#00D395"/><rect x="75" y="60" width="50" height="120" fill="#00D395"/><rect x="80" y="40" width="40" height="22" fill="#00D395"/>
+      <rect x="170" y="70" width="55" height="110" fill="#3B82F6"/><rect x="265" y="55" width="60" height="125" fill="#00D395"/>
+      <rect x="408" y="65" width="55" height="115" fill="#00D395"/><rect x="558" y="50" width="60" height="130" fill="#00D395"/>
+      <rect x="698" y="60" width="50" height="120" fill="#00D395"/>
+    </svg>
+    <div style="position:absolute;top:-80px;left:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(0,211,149,.12) 0%,transparent 70%);pointer-events:none"></div>
+    <div style="position:relative;z-index:1;padding:28px 28px 22px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.5px">PL<span style="color:var(--green)">IT</span></div>
+        <div style="display:flex;gap:16px;font-size:12px;color:var(--text2)">
+          <span style="cursor:pointer">Plataforma</span><span style="cursor:pointer">Propiedades</span><span style="cursor:pointer">Tokenizar</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-gh btn-sm" onclick="go('login')">Entrar</button>
+          <button class="btn btn-p btn-sm" onclick="go('login')">Empezar</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:24px;align-items:flex-start">
+        <div style="flex:1.1">
+          <div class="badge bg" style="margin-bottom:14px;font-size:11px">⬡ Plataforma #1 en tokenización inmobiliaria en México</div>
+          <h1 style="font-size:28px;font-weight:800;line-height:1.15;margin-bottom:10px;letter-spacing:-.5px">Invierte en los mejores<br><span style="color:var(--green)">bienes raíces</span> del país<br>desde $1,000 MXN</h1>
+          <p style="color:var(--text2);font-size:13px;line-height:1.7;margin-bottom:20px;max-width:340px">PLIT tokeniza propiedades premium y te permite invertir, recibir rendimientos y vender cuando quieras.</p>
+          <div style="display:flex;gap:8px;margin-bottom:22px">
+            <button class="btn btn-p" onclick="go('login')" style="font-size:13px;padding:10px 18px">Explorar inversiones</button>
+            <button class="btn btn-o" onclick="go('upload')" style="font-size:13px;padding:10px 18px">Tokenizar propiedad</button>
+          </div>
+          <div style="display:flex;gap:18px">
+            <div><div style="font-size:18px;font-weight:800;color:var(--green)">$2.1B+</div><div style="font-size:10px;color:var(--text3)">En propiedades</div></div>
+            <div style="width:1px;background:var(--border)"></div>
+            <div><div style="font-size:18px;font-weight:800">15.4%</div><div style="font-size:10px;color:var(--text3)">ROI promedio</div></div>
+            <div style="width:1px;background:var(--border)"></div>
+            <div><div style="font-size:18px;font-weight:800">12,400+</div><div style="font-size:10px;color:var(--text3)">Inversores</div></div>
+          </div>
+        </div>
+        <div style="flex:.9;display:flex;flex-direction:column;gap:8px">
+          <div style="background:rgba(24,32,48,.85);border:1px solid var(--border2);border-radius:14px;overflow:hidden">
+            <svg width="100%" height="75" viewBox="0 0 300 75" preserveAspectRatio="xMidYMid slice">
+              <rect width="300" height="75" fill="#0d1e14"/>
+              <rect x="0" y="35" width="28" height="40" fill="#1a3a2a" rx="2"/><rect x="55" y="12" width="46" height="63" fill="#1f4a2e" rx="3"/><rect x="57" y="2" width="42" height="12" fill="#1f4a2e" rx="1"/>
+              <rect x="141" y="5" width="58" height="70" fill="#1d4530" rx="3"/><rect x="203" y="40" width="37" height="35" fill="#163020" rx="2"/>
+              <rect x="0" y="63" width="300" height="12" fill="#060e09" opacity=".95"/>
+              <circle cx="170" cy="6" r="5" fill="#00D395" opacity=".8"/>
+            </svg>
+            <div style="padding:9px 12px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">
+                <div><div style="font-size:12px;font-weight:600">Torre Reforma 222</div><div style="font-size:10px;color:var(--text3)">Santa Fe, CDMX</div></div>
+                <div class="roi" style="font-size:18px">16.2%</div>
+              </div>
+              <div class="pb"><div class="pf pg" style="width:78%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px"><span>78% financiado</span><span>Token: $125 MXN</span></div>
+            </div>
+          </div>
+          <div style="background:rgba(24,32,48,.85);border:1px solid var(--border2);border-radius:12px;padding:10px 13px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.6px">Flujo de tokenización</div>
+            <div style="display:flex;align-items:center">
+              <div style="text-align:center;flex:1"><div style="width:30px;height:30px;border-radius:8px;background:rgba(0,211,149,.15);border:1px solid rgba(0,211,149,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 3px;font-size:13px">🏢</div><div style="font-size:9px;color:var(--text3)">Propiedad</div></div>
+              <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--green),var(--blue));position:relative"><div style="position:absolute;top:-4px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite"></div></div>
+              <div style="text-align:center;flex:1"><div style="width:30px;height:30px;border-radius:8px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 3px;font-size:13px">🪙</div><div style="font-size:9px;color:var(--text3)">Tokens</div></div>
+              <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--blue),var(--purple));position:relative"><div style="position:absolute;top:-4px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse 1.5s .5s infinite"></div></div>
+              <div style="text-align:center;flex:1"><div style="width:30px;height:30px;border-radius:8px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 3px;font-size:13px">📈</div><div style="font-size:9px;color:var(--text3)">Rendimientos</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:18px 24px">
+    <div class="g2" style="margin-bottom:16px">
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:14px;overflow:hidden">
+        <div style="background:linear-gradient(135deg,rgba(0,211,149,.1),rgba(59,130,246,.06));padding:14px 16px 10px;border-bottom:1px solid var(--border)">
+          <div class="badge bg" style="margin-bottom:7px">Para Inversionistas</div>
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:3px">Haz crecer tu dinero</h3>
+        </div>
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:center;gap:7px;font-size:11px"><div style="width:16px;height:16px;border-radius:4px;background:rgba(0,211,149,.15);border:1px solid rgba(0,211,149,.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--green);flex-shrink:0">✓</div>Desde $1,000 MXN — sin montos absurdos</div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:11px"><div style="width:16px;height:16px;border-radius:4px;background:rgba(0,211,149,.15);border:1px solid rgba(0,211,149,.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--green);flex-shrink:0">✓</div>ROI 12–22% anual validado</div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:11px"><div style="width:16px;height:16px;border-radius:4px;background:rgba(0,211,149,.15);border:1px solid rgba(0,211,149,.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--green);flex-shrink:0">✓</div>Liquidez real en mercado secundario</div>
+        </div>
+        <div style="padding:0 16px 14px"><button class="btn btn-p" style="width:100%;font-size:12px" onclick="go('login')">Empezar a invertir →</button></div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:14px;overflow:hidden">
+        <div style="background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(59,130,246,.06));padding:14px 16px 10px;border-bottom:1px solid var(--border)">
+          <div class="badge bp" style="margin-bottom:7px">Para Propietarios</div>
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:3px">Liquidez sin vender</h3>
+        </div>
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:center;gap:7px;font-size:11px"><div style="width:16px;height:16px;border-radius:4px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:#A78BFA;flex-shrink:0">✓</div>Sin vender tu propiedad</div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:11px"><div style="width:16px;height:16px;border-radius:4px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:#A78BFA;flex-shrink:0">✓</div>Proceso 100% digital · 4–6 semanas</div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:11px"><div style="width:16px;height:16px;border-radius:4px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:#A78BFA;flex-shrink:0">✓</div>Acceso a +12,000 inversores PLIT</div>
+        </div>
+        <div style="padding:0 16px 14px"><button class="btn btn-o" style="width:100%;font-size:12px;border-color:rgba(124,58,237,.4);color:#A78BFA" onclick="go('upload')">Tokenizar propiedad →</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen" id="screen-login">
+  <div style="min-height:590px;background:var(--bg);display:flex">
+    <div style="flex:1;background:var(--bg2);border-right:1px solid var(--border);padding:26px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-60px;left:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(0,211,149,.11) 0%,transparent 70%);pointer-events:none"></div>
+      <div style="position:relative;z-index:1">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;margin-bottom:24px">PL<span style="color:var(--green)">IT</span></div>
+        <svg width="100%" height="130" viewBox="0 0 240 130" preserveAspectRatio="xMidYMid meet" style="margin-bottom:16px">
+          <rect x="20" y="65" width="30" height="65" fill="#1a3a24" rx="3"/><rect x="22" y="50" width="26" height="17" fill="#1a3a24" rx="2"/>
+          <rect x="55" y="35" width="50" height="95" fill="#1f4a2e" rx="3"/><rect x="57" y="20" width="46" height="17" fill="#1f4a2e" rx="2"/>
+          <rect x="110" y="55" width="35" height="75" fill="#163322" rx="3"/>
+          <rect x="150" y="15" width="60" height="115" fill="#1d4530" rx="3"/><rect x="152" y="3" width="56" height="14" fill="#1d4530" rx="2"/>
+          <rect x="215" y="75" width="25" height="55" fill="#1a3a24" rx="2"/>
+          <rect x="0" y="120" width="240" height="10" fill="#060e09"/>
+          <circle cx="180" cy="8" r="5" fill="#00D395" opacity=".8"/>
+        </svg>
+        <h2 style="font-size:16px;font-weight:700;margin-bottom:7px">El futuro del real estate es digital</h2>
+        <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:14px">Únete a más de 12,400 inversores que ya generan rendimientos con propiedades tokenizadas.</p>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="background:rgba(0,211,149,.07);border:1px solid rgba(0,211,149,.15);border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:10px">
+            <div style="font-size:18px;font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--green)">15.4%</div>
+            <div style="font-size:11px;color:var(--text2)">ROI promedio anual validado</div>
+          </div>
+          <div style="background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:10px">
+            <div style="font-size:18px;font-family:'Space Grotesk',sans-serif;font-weight:800;color:#60A5FA">$2.1B+</div>
+            <div style="font-size:11px;color:var(--text2)">En activos bajo administración</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--text3);position:relative;z-index:1">Regulado CNBV · Fideicomiso garantizado</div>
+    </div>
+    <div style="flex:1;padding:26px;display:flex;flex-direction:column;justify-content:center">
+      <div style="display:flex;gap:0;background:var(--bg3);border-radius:10px;padding:3px;margin-bottom:20px">
+        <div id="tab-login" onclick="switchAuth('login')" style="flex:1;text-align:center;padding:7px;border-radius:7px;font-size:13px;cursor:pointer;background:var(--card);color:var(--text);font-weight:500;transition:all .2s">Iniciar sesión</div>
+        <div id="tab-signup" onclick="switchAuth('signup')" style="flex:1;text-align:center;padding:7px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--text2);transition:all .2s">Crear cuenta</div>
+      </div>
+      <div id="form-login">
+        <div style="margin-bottom:12px"><div style="font-size:11px;color:var(--text3);margin-bottom:5px">Correo</div><input class="inp" type="email" placeholder="ana@email.com" id="ei"></div>
+        <div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><div style="font-size:11px;color:var(--text3)">Contraseña</div><div style="font-size:11px;color:var(--green);cursor:pointer">¿Olvidaste?</div></div><input class="inp" type="password" placeholder="••••••••" id="pi"></div>
+        <div style="font-size:11px;color:#FCA5A5;margin-bottom:10px;min-height:16px" id="lerr"></div>
+        <button class="btn btn-p" style="width:100%;padding:11px;font-size:14px;font-weight:600;margin-bottom:10px" onclick="doLogin()">Entrar a PLIT</button>
+        <div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:10px">o continúa con</div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <button class="btn btn-gh" style="flex:1;font-size:12px">G Google</button>
+          <button class="btn btn-gh" style="flex:1;font-size:12px">⊞ Microsoft</button>
+        </div>
+        <div style="font-size:11px;color:var(--text3);text-align:center">¿No tienes cuenta? <span style="color:var(--green);cursor:pointer" onclick="switchAuth('signup')">Regístrate gratis</span></div>
+      </div>
+      <div id="form-signup" style="display:none">
+        <div class="g2" style="margin-bottom:10px"><div><div style="font-size:11px;color:var(--text3);margin-bottom:5px">Nombre</div><input class="inp" placeholder="Ana"></div><div><div style="font-size:11px;color:var(--text3);margin-bottom:5px">Apellido</div><input class="inp" placeholder="Rodríguez"></div></div>
+        <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--text3);margin-bottom:5px">Correo</div><input class="inp" type="email" placeholder="ana@email.com"></div>
+        <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--text3);margin-bottom:5px">Contraseña</div><input class="inp" type="password" placeholder="Mínimo 8 caracteres"></div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Soy principalmente:</div>
+          <div style="display:flex;gap:7px">
+            <div id="role-inv" onclick="selRole('inv')" style="flex:1;padding:8px;border-radius:9px;border:1px solid var(--green);background:rgba(0,211,149,.08);text-align:center;cursor:pointer"><div style="font-size:15px;margin-bottom:2px">💰</div><div style="font-size:11px;font-weight:500;color:var(--green)">Inversionista</div></div>
+            <div id="role-own" onclick="selRole('own')" style="flex:1;padding:8px;border-radius:9px;border:1px solid var(--border);background:transparent;text-align:center;cursor:pointer"><div style="font-size:15px;margin-bottom:2px">🏢</div><div style="font-size:11px;font-weight:500;color:var(--text2)">Propietario</div></div>
+            <div id="role-both" onclick="selRole('both')" style="flex:1;padding:8px;border-radius:9px;border:1px solid var(--border);background:transparent;text-align:center;cursor:pointer"><div style="font-size:15px;margin-bottom:2px">⚡</div><div style="font-size:11px;font-weight:500;color:var(--text2)">Ambos</div></div>
+          </div>
+        </div>
+        <button class="btn btn-p" style="width:100%;padding:11px;font-size:14px;font-weight:600;margin-bottom:8px" onclick="go('dashboard')">Crear cuenta gratis</button>
+        <div style="font-size:10px;color:var(--text3);text-align:center">Al crear tu cuenta aceptas los <span style="color:var(--green)">Términos</span> y <span style="color:var(--green)">Privacidad</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen active" id="screen-dashboard">
+  <div style="padding:18px">
+    <div style="margin-bottom:14px"><div style="font-size:15px;font-weight:600">Buen día, Ana 👋</div><div style="font-size:12px;color:var(--text3)">Tu portafolio está rindiendo bien este mes</div></div>
+    <div class="g4" style="margin-bottom:14px">
+      <div class="card"><div class="sl">Total invertido</div><div class="sv">$248.5k</div><div class="sc">+12.3% este año</div></div>
+      <div class="card"><div class="sl">Rendimiento</div><div class="sv" style="color:var(--green)">$38.2k</div><div class="sc">+$2.8k este mes</div></div>
+      <div class="card"><div class="sl">Tokens</div><div class="sv">1,847</div><div class="sc" style="color:var(--text3)">5 propiedades</div></div>
+      <div class="card"><div class="sl">ROI actual</div><div class="sv" style="color:var(--blue)">15.4%</div><div class="sc">Promedio anual</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="sl">Evolución del portafolio</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><div style="font-size:18px;font-weight:700;color:var(--green)">$286,700</div><div style="font-size:11px;color:var(--green)">+15.4%</div></div>
+        <svg width="100%" height="60" viewBox="0 0 220 60" style="overflow:visible">
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00D395" stop-opacity=".18"/><stop offset="100%" stop-color="#00D395" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,55 L25,50 L50,40 L75,37 L100,30 L125,23 L150,18 L175,14 L200,10 L220,6" fill="none" stroke="#00D395" stroke-width="2"/>
+          <path d="M0,55 L25,50 L50,40 L75,37 L100,30 L125,23 L150,18 L175,14 L200,10 L220,6 L220,60 L0,60Z" fill="url(#lg)"/>
+          <circle cx="220" cy="6" r="3" fill="#00D395"/>
+        </svg>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px"><span>Ene</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span><span>Nov</span><span>Hoy</span></div>
+      </div>
+      <div class="card">
+        <div class="sl">Distribución</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <svg width="65" height="65" viewBox="0 0 65 65"><circle cx="32" cy="32" r="26" fill="none" stroke="#182030" stroke-width="11"/><circle cx="32" cy="32" r="26" fill="none" stroke="#00D395" stroke-width="11" stroke-dasharray="82 81" stroke-dashoffset="-20" transform="rotate(-90 32 32)"/><circle cx="32" cy="32" r="26" fill="none" stroke="#3B82F6" stroke-width="11" stroke-dasharray="49 114" stroke-dashoffset="-102" transform="rotate(-90 32 32)"/><circle cx="32" cy="32" r="26" fill="none" stroke="#7C3AED" stroke-width="11" stroke-dasharray="32 131" stroke-dashoffset="-151" transform="rotate(-90 32 32)"/></svg>
+          <div style="font-size:11px;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span>Comercial 50%</div>
+            <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block"></span>Residencial 30%</div>
+            <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--purple);display:inline-block"></span>Turístico 20%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sl">Inversiones activas</div>
+      <div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 80px"><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Propiedad</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Valor</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">ROI</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Tokens</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Estado</div></div>
+      <div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 80px"><div style="font-size:12px;font-weight:500">Torre Reforma 222</div><div style="font-size:12px">$89,200</div><div style="font-size:12px;color:var(--green)">16.2%</div><div style="font-size:12px">720</div><div><span class="badge bg">Activo</span></div></div>
+      <div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 80px"><div style="font-size:12px;font-weight:500">Playa Mita Resort</div><div style="font-size:12px">$120,000</div><div style="font-size:12px;color:var(--green)">18.8%</div><div style="font-size:12px">960</div><div><span class="badge bb">Preventa</span></div></div>
+      <div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 80px"><div style="font-size:12px;font-weight:500">Monterrey Centro</div><div style="font-size:12px">$39,300</div><div style="font-size:12px;color:var(--green)">12.5%</div><div style="font-size:12px">167</div><div><span class="badge bg">Activo</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPLORE -->
+<div class="screen" id="screen-explore">
+  <div style="padding:18px">
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+      <div class="chip active">Todos</div><div class="chip">Comercial</div><div class="chip">Residencial</div><div class="chip">Turístico</div>
+      <div style="flex:1"></div><div class="chip">ROI mayor</div><div class="chip">Bajo riesgo</div>
+    </div>
+    <div class="g2">
+      <div class="card" style="padding:11px;cursor:pointer" onclick="go('property')">
+        <div style="position:relative;margin-bottom:9px"><svg width="100%" height="90" viewBox="0 0 240 90" preserveAspectRatio="xMidYMid slice" style="border-radius:8px;display:block"><rect width="240" height="90" fill="#091408"/><rect x="55" y="12" width="46" height="78" fill="#1a3a24" rx="3"/><rect x="141" y="5" width="58" height="85" fill="#1f4530" rx="3"/><rect x="0" y="78" width="240" height="12" fill="#060e09" opacity=".95"/><circle cx="170" cy="6" r="5" fill="#00D395" opacity=".8"/></svg><div style="position:absolute;top:6px;left:6px"><span class="badge ba">🔥 Hot</span></div><div style="position:absolute;top:6px;right:6px"><span class="badge bg">Bajo riesgo</span></div></div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">Torre Reforma 222</div><div style="font-size:11px;color:var(--text3);margin-bottom:7px">Santa Fe, CDMX</div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:5px"><div class="roi">16.2%</div><div style="font-size:11px;color:var(--text3)">ROI anual</div></div>
+        <div class="pb" style="margin-bottom:3px"><div class="pf pg" style="width:78%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>78% financiado</span><span>Token: $125</span></div>
+      </div>
+      <div class="card" style="padding:11px;cursor:pointer" onclick="go('property')">
+        <div style="position:relative;margin-bottom:9px"><svg width="100%" height="90" viewBox="0 0 240 90" preserveAspectRatio="xMidYMid slice" style="border-radius:8px;display:block"><rect width="240" height="90" fill="#081420"/><ellipse cx="120" cy="72" rx="100" ry="16" fill="#0d2040"/><rect x="70" y="28" width="100" height="52" fill="#102848" rx="5"/><circle cx="120" cy="20" r="5" fill="#3B82F6" opacity=".7"/></svg><div style="position:absolute;top:6px;right:6px"><span class="badge bb">Nuevo</span></div></div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">Playa Mita Resort</div><div style="font-size:11px;color:var(--text3);margin-bottom:7px">Nayarit</div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:5px"><div class="roi">18.8%</div><div style="font-size:11px;color:var(--text3)">ROI anual</div></div>
+        <div class="pb" style="margin-bottom:3px"><div class="pf pbl" style="width:45%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>45% financiado</span><span>Token: $200</span></div>
+      </div>
+      <div class="card" style="padding:11px;cursor:pointer" onclick="go('property')">
+        <div style="position:relative;margin-bottom:9px"><svg width="100%" height="90" viewBox="0 0 240 90" preserveAspectRatio="xMidYMid slice" style="border-radius:8px;display:block"><rect width="240" height="90" fill="#140820"/><rect x="93" y="10" width="58" height="80" fill="#2e1260" rx="3"/><rect x="47" y="30" width="42" height="60" fill="#1e0c3c" rx="2"/><circle cx="122" cy="5" r="5" fill="#7C3AED" opacity=".8"/></svg><div style="position:absolute;top:6px;left:6px"><span class="badge bp">Desarrollo</span></div></div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">GDL Polanco West</div><div style="font-size:11px;color:var(--text3);margin-bottom:7px">Jalisco</div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:5px"><div class="roi">14.1%</div><div style="font-size:11px;color:var(--text3)">ROI anual</div></div>
+        <div class="pb" style="margin-bottom:3px"><div class="pf ppu" style="width:32%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>32% financiado</span><span>Preventa</span></div>
+      </div>
+      <div class="card" style="padding:11px;cursor:pointer" onclick="go('property')">
+        <div style="position:relative;margin-bottom:9px"><svg width="100%" height="90" viewBox="0 0 240 90" preserveAspectRatio="xMidYMid slice" style="border-radius:8px;display:block"><rect width="240" height="90" fill="#140c08"/><rect x="102" y="18" width="60" height="72" fill="#3d1c0c" rx="3"/><rect x="48" y="32" width="50" height="58" fill="#2e1408" rx="3"/><circle cx="132" cy="11" r="5" fill="#F59E0B" opacity=".8"/></svg><div style="position:absolute;top:6px;left:6px"><span class="badge bg">Bajo riesgo</span></div></div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">Monterrey Centro</div><div style="font-size:11px;color:var(--text3);margin-bottom:7px">Monterrey</div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:5px"><div class="roi">12.5%</div><div style="font-size:11px;color:var(--text3)">ROI anual</div></div>
+        <div class="pb" style="margin-bottom:3px"><div class="pf pg" style="width:92%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>92% financiado</span><span>Token: $80</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROPERTY -->
+<div class="screen" id="screen-property">
+  <div style="padding:18px;display:flex;gap:14px;align-items:flex-start">
+    <div style="flex:1">
+      <svg width="100%" height="120" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice" style="border-radius:12px;display:block;margin-bottom:12px"><rect width="400" height="120" fill="#091408"/><rect x="50" y="18" width="75" height="102" fill="#1a3a24" rx="4"/><rect x="190" y="5" width="95" height="115" fill="#1f4530" rx="4"/><rect x="290" y="55" width="55" height="65" fill="#163020" rx="3"/><rect x="0" y="108" width="400" height="12" fill="#060e09" opacity=".95"/><circle cx="237" cy="6" r="7" fill="#00D395" opacity=".8"/></svg>
+      <div class="tab-bar"><div class="tab active">Overview</div><div class="tab">Finanzas</div><div class="tab">Documentos</div><div class="tab">Riesgos</div></div>
+      <div class="card" style="margin-bottom:10px"><div style="font-size:14px;font-weight:600;margin-bottom:6px">Torre Reforma 222 — CDMX</div><p style="font-size:12px;color:var(--text2);line-height:1.6">Edificio corporativo clase A+ en el corredor financiero de Santa Fe. 32 pisos, 18,000 m². Contratos con empresas Fortune 500.</p><div class="div"></div><div class="g3"><div><div class="sl">Tipo</div><div style="font-size:12px;font-weight:500">Comercial</div></div><div><div class="sl">Superficie</div><div style="font-size:12px;font-weight:500">18,000 m²</div></div><div><div class="sl">Ocupación</div><div style="font-size:12px;font-weight:500;color:var(--green)">97%</div></div></div></div>
+    </div>
+    <div style="width:175px;flex-shrink:0">
+      <div class="card">
+        <div class="roi" style="text-align:center;margin-bottom:3px">16.2%</div>
+        <div style="text-align:center;font-size:10px;color:var(--text3);margin-bottom:12px">ROI anual estimado</div>
+        <div class="sl">¿Cuánto invertir?</div>
+        <input class="inp" type="number" value="10000" id="pa" style="margin-bottom:7px;font-size:14px;font-weight:700" oninput="pr()">
+        <input type="range" min="1000" max="100000" step="1000" value="10000" style="width:100%;accent-color:var(--green);margin-bottom:10px" oninput="document.getElementById('pa').value=this.value;pr()">
+        <div class="div"></div>
+        <div style="margin-bottom:6px"><div class="sl">Tokens</div><div style="font-size:16px;font-weight:700" id="pt">80</div></div>
+        <div style="margin-bottom:12px"><div class="sl">Retorno/año</div><div style="font-size:16px;font-weight:700;color:var(--green)" id="pr2">$1,620</div></div>
+        <button class="btn btn-p" style="width:100%;font-size:12px" onclick="go('invest')">Invertir ahora</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INVEST -->
+<div class="screen" id="screen-invest">
+  <div style="padding:18px;max-width:400px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:18px">
+      <div class="sd sd-done" id="d1">1</div><div class="sl-line sl-done" id="l1"></div>
+      <div class="sd sd-active" id="d2">2</div><div class="sl-line" id="l2"></div>
+      <div class="sd sd-todo" id="d3">3</div><div class="sl-line" id="l3"></div>
+      <div class="sd sd-todo" id="d4">4</div>
+    </div>
+    <div class="fs" id="f1"><div class="card" style="margin-bottom:12px"><div style="font-size:14px;font-weight:600;margin-bottom:12px">¿Cuánto invertir?</div><input class="inp" type="number" value="10000" style="font-size:20px;font-weight:700;margin-bottom:10px"><input type="range" min="1000" max="100000" step="1000" value="10000" style="width:100%;accent-color:var(--green)"><div class="div"></div><div class="g2"><div><div class="sl">Tokens</div><div style="font-size:15px;font-weight:700">80</div></div><div><div class="sl">Retorno/año</div><div style="font-size:15px;font-weight:700;color:var(--green)">$1,620</div></div></div></div><button class="btn btn-p" style="width:100%" onclick="ns(2)">Continuar</button></div>
+    <div class="fs active" id="f2"><div style="font-size:14px;font-weight:600;margin-bottom:12px">Revisa y firma el contrato</div><div class="card" style="margin-bottom:10px;max-height:150px;overflow-y:auto"><div style="font-size:11px;color:var(--text2);line-height:1.7"><div style="font-weight:600;margin-bottom:5px;color:var(--text)">CONTRATO DE INVERSIÓN — PLIT</div>El presente contrato establece los términos de la inversión tokenizada en "Torre Reforma 222"...<br><br><b>CLÁUSULA 2 — RENDIMIENTOS</b><br>Distribución mensual. ROI proyectado: 16.2% anual...</div></div><div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;padding:9px;background:var(--bg3);border-radius:8px"><input type="checkbox" style="margin-top:2px"><label style="font-size:11px;color:var(--text2)">He leído y acepto los términos del contrato y el fideicomiso</label></div><button class="btn btn-p" style="width:100%;margin-bottom:8px" onclick="ns(3)">Firmar y continuar</button><button class="btn btn-gh" style="width:100%" onclick="ns(1)">Volver</button></div>
+    <div class="fs" id="f3"><div style="font-size:14px;font-weight:600;margin-bottom:12px">Método de pago</div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"><div class="card" style="border-color:var(--green);background:rgba(0,211,149,.05);cursor:pointer"><div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;background:rgba(0,211,149,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px">🏦</div><div><div style="font-size:13px;font-weight:500">SPEI</div><div style="font-size:11px;color:var(--text3)">Acreditación 15 min</div></div><div style="margin-left:auto;width:15px;height:15px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:9px;color:#0A0D12">✓</div></div></div><div class="card" style="cursor:pointer"><div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px">💳</div><div><div style="font-size:13px;font-weight:500">Tarjeta</div><div style="font-size:11px;color:var(--text3)">2.5% comisión</div></div></div></div></div><div class="card" style="margin-bottom:12px"><div style="font-size:11px;color:var(--text2);line-height:1.9">CLABE: 646180123456789012 · Ref: INV-TOR-8821 · <b>$10,000.00 MXN</b></div></div><button class="btn btn-p" style="width:100%;margin-bottom:8px" onclick="ns(4)">Confirmar pago</button><button class="btn btn-gh" style="width:100%" onclick="ns(2)">Volver</button></div>
+    <div class="fs" id="f4"><div style="text-align:center;padding:16px 0"><div style="width:56px;height:56px;border-radius:50%;background:rgba(0,211,149,.15);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 10px;animation:pop .4s ease">✓</div><h2 style="font-size:17px;font-weight:700;margin-bottom:5px">¡Inversión realizada!</h2><p style="font-size:12px;color:var(--text3);margin-bottom:18px">Tus tokens llegarán en breve a tu wallet PLIT.</p></div><div class="card" style="margin-bottom:12px"><div class="sl">Resumen</div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px"><span style="color:var(--text3)">Propiedad</span><span style="font-weight:500">Torre Reforma 222</span></div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px"><span style="color:var(--text3)">Monto</span><span style="font-weight:500">$10,000 MXN</span></div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Tokens</span><span style="font-weight:500;color:var(--green)">80 TREF</span></div></div><button class="btn btn-p" style="width:100%;margin-bottom:8px" onclick="go('dashboard')">Ver portafolio</button><button class="btn btn-gh" style="width:100%" onclick="go('explore')">Seguir explorando</button></div>
+  </div>
+</div>
+
+<!-- PORTFOLIO -->
+<div class="screen" id="screen-portfolio">
+  <div style="padding:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div><div style="font-size:15px;font-weight:600">Mi Portafolio</div><div style="font-size:12px;color:var(--text3)">5 inversiones activas</div></div><div style="text-align:right"><div style="font-size:20px;font-weight:700;color:var(--green)">$286,700</div><div style="font-size:11px;color:var(--green)">+$38,200 rendimientos</div></div></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="card" style="cursor:pointer" onclick="go('property')"><div style="display:flex;align-items:center;gap:11px"><div style="width:42px;height:42px;background:linear-gradient(135deg,#1a3a24,#0d2018);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏢</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Torre Reforma 222</div><div style="font-size:11px;color:var(--text3)">720 tokens · CDMX</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:600">$89,200</div><div style="font-size:11px;color:var(--green)">+16.2%</div></div><button class="btn btn-gh btn-sm" style="margin-left:6px">Ver</button></div></div>
+      <div class="card"><div style="display:flex;align-items:center;gap:11px"><div style="width:42px;height:42px;background:linear-gradient(135deg,#1a2a3a,#0B1420);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏖️</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Playa Mita Resort</div><div style="font-size:11px;color:var(--text3)">960 tokens · Nayarit</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:600">$120,000</div><div style="font-size:11px;color:var(--green)">+18.8%</div></div><button class="btn btn-gh btn-sm" style="margin-left:6px">Ver</button></div></div>
+      <div class="card"><div style="display:flex;align-items:center;gap:11px"><div style="width:42px;height:42px;background:linear-gradient(135deg,#2a1a3a,#14081A);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏙️</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Monterrey Centro</div><div style="font-size:11px;color:var(--text3)">167 tokens · MTY</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:600">$39,300</div><div style="font-size:11px;color:var(--green)">+12.5%</div></div><button class="btn btn-gh btn-sm" style="margin-left:6px">Ver</button></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD -->
+<div class="screen" id="screen-upload">
+  <div style="padding:18px;max-width:480px;margin:0 auto">
+    <div style="font-size:15px;font-weight:600;margin-bottom:3px">Tokenizar mi propiedad</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Proceso 100% digital · Respuesta en 48h</div>
+    <div style="display:flex;align-items:center;gap:5px;margin-bottom:16px"><div class="sd sd-active">1</div><div class="sl-line"></div><div class="sd sd-todo">2</div><div class="sl-line"></div><div class="sd sd-todo">3</div><div class="sl-line"></div><div class="sd sd-todo">4</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">Información básica</div>
+      <div style="margin-bottom:10px"><div class="sl" style="margin-bottom:4px">Dirección completa</div><input class="inp" placeholder="Av. Reforma 222, Santa Fe, CDMX"></div>
+      <div class="g2" style="margin-bottom:10px"><div><div class="sl" style="margin-bottom:4px">Superficie (m²)</div><input class="inp" placeholder="500"></div><div><div class="sl" style="margin-bottom:4px">Tipo</div><select class="inp"><option>Comercial</option><option>Residencial</option><option>Turístico</option></select></div></div>
+      <div><div class="sl" style="margin-bottom:4px">Fotos</div><div style="border:1.5px dashed var(--border2);border-radius:8px;padding:18px;text-align:center;cursor:pointer"><div style="font-size:18px;margin-bottom:4px">📷</div><div style="font-size:12px;color:var(--text3)">Arrastra fotos o haz clic</div></div></div>
+    </div>
+    <button class="btn btn-p" style="width:100%">Continuar →</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="screen" id="screen-admin">
+  <div style="padding:18px">
+    <div class="g3" style="margin-bottom:14px">
+      <div class="card" style="border-left:3px solid var(--green)"><div class="sl">Propiedades activas</div><div class="sv">24</div><div class="sc">+3 esta semana</div></div>
+      <div class="card" style="border-left:3px solid var(--blue)"><div class="sl">Inversiones</div><div class="sv">1,847</div><div class="sc">$48.2M gestionados</div></div>
+      <div class="card" style="border-left:3px solid var(--purple)"><div class="sl">Usuarios</div><div class="sv">12,400</div><div class="sc">+120 este mes</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><div class="sl" style="margin-bottom:0">Propiedades pendientes</div><div class="badge ba">5 por revisar</div></div>
+      <table class="admt"><thead><tr><th>Propiedad</th><th>Propietario</th><th>Valor</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+        <tr><td style="color:var(--text)">Torre Insurgentes</td><td>Carlos M.</td><td>$15.2M</td><td><span class="badge ba">Revisión</span></td><td style="display:flex;gap:4px"><button class="btn btn-p btn-sm">✓</button><button class="btn btn-gh btn-sm">✗</button></td></tr>
+        <tr><td style="color:var(--text)">Condesa Loft</td><td>María F.</td><td>$3.8M</td><td><span class="badge bb">Incompleto</span></td><td style="display:flex;gap:4px"><button class="btn btn-gh btn-sm">Editar</button></td></tr>
+        <tr><td style="color:var(--text)">Cancún Beach Club</td><td>Grupo Sol</td><td>$42M</td><td><span class="badge bg">Listo</span></td><td style="display:flex;gap:4px"><button class="btn btn-p btn-sm">Publicar</button></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function go(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById('screen-'+n).classList.add('active');
+  var nv=document.getElementById('nv-'+n);
+  if(nv)nv.classList.add('active');
+}
+
+function openBCModal(){
+  var m=document.getElementById('bc-modal');
+  m.classList.add('open');
+  var iframe=document.getElementById('bc-iframe');
+  iframe.onerror=function(){showFallback()};
+  setTimeout(function(){
+    try{
+      var doc=iframe.contentDocument||iframe.contentWindow.document;
+      if(!doc||doc.body.innerHTML==='')showFallback();
+    }catch(e){showFallback();}
+  },2000);
+}
+
+function showFallback(){
+  document.getElementById('bc-iframe').style.display='none';
+  document.getElementById('bc-fallback').style.display='flex';
+}
+
+function closeBCModal(e){
+  if(!e||e.target===document.getElementById('bc-modal')){
+    document.getElementById('bc-modal').classList.remove('open');
+    document.getElementById('bc-iframe').style.display='block';
+    document.getElementById('bc-fallback').style.display='none';
+  }
+}
+
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeBCModal();});
+
+function switchAuth(m){
+  var fl=document.getElementById('form-login'),fs=document.getElementById('form-signup');
+  var tl=document.getElementById('tab-login'),ts=document.getElementById('tab-signup');
+  if(m==='login'){fl.style.display='block';fs.style.display='none';tl.style.background='var(--card)';tl.style.color='var(--text)';tl.style.fontWeight='500';ts.style.background='transparent';ts.style.color='var(--text2)';ts.style.fontWeight='400';}
+  else{fl.style.display='none';fs.style.display='block';ts.style.background='var(--card)';ts.style.color='var(--text)';ts.style.fontWeight='500';tl.style.background='transparent';tl.style.color='var(--text2)';tl.style.fontWeight='400';}
+}
+
+function selRole(r){
+  ['inv','own','both'].forEach(function(id){
+    var el=document.getElementById('role-'+id);
+    if(id===r){el.style.border='1px solid var(--green)';el.style.background='rgba(0,211,149,.08)';el.querySelector('div:last-child').style.color='var(--green)';}
+    else{el.style.border='1px solid var(--border)';el.style.background='transparent';el.querySelector('div:last-child').style.color='var(--text2)';}
+  });
+}
+
+function doLogin(){
+  var e=document.getElementById('ei').value,p=document.getElementById('pi').value,err=document.getElementById('lerr');
+  if(e&&p){go('dashboard');}else{err.textContent='Por favor ingresa tu correo y contraseña';}
+}
+
+function pr(){
+  var a=parseFloat(document.getElementById('pa').value)||0;
+  document.getElementById('pt').textContent=Math.round(a/125).toLocaleString();
+  document.getElementById('pr2').textContent='$'+Math.round(a*0.162).toLocaleString()+' MXN';
+}
+
+function ns(s){
+  document.querySelectorAll('.fs').forEach(f=>f.classList.remove('active'));
+  document.getElementById('f'+s).classList.add('active');
+  for(var i=1;i<=4;i++){
+    var d=document.getElementById('d'+i);d.className='sd '+(i<s?'sd-done':i===s?'sd-active':'sd-todo');
+    if(i<4){var l=document.getElementById('l'+i);l.className='sl-line'+(i<s?' sl-done':'');}
+  }
+}
+ns(2);
+</script>
