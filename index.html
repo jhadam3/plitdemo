@@ -1,0 +1,933 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0A0D12;--bg2:#0F1520;--bg3:#141C2A;--card:#182030;--card2:#1C2640;
+--green:#00D395;--green2:#00B07A;--green3:rgba(0,211,149,0.12);
+--blue:#3B82F6;--purple:#7C3AED;--gold:#F59E0B;
+--text:#F1F5F9;--text2:#94A3B8;--text3:#475569;
+--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif}
+.app{display:flex;height:640px;overflow:hidden}
+.sidebar{width:196px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:18px 0;flex-shrink:0}
+.logo-wrap{padding:0 18px 18px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.logo-text{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.5px;color:var(--text)}
+.logo-text span{color:var(--green)}
+.logo-sub{font-size:10px;color:var(--text3);margin-top:1px;letter-spacing:1px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all .18s}
+.nav-item:hover{background:rgba(255,255,255,0.03);color:var(--text)}
+.nav-item.active{background:rgba(0,211,149,0.08);color:var(--green);border-left-color:var(--green)}
+.nav-ic{width:15px;height:15px;flex-shrink:0;font-style:normal;font-size:13px}
+.topbar{height:50px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:10px;flex-shrink:0}
+.search{flex:1;max-width:260px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px}
+.wallet{background:rgba(0,211,149,0.1);border:1px solid rgba(0,211,149,0.22);border-radius:20px;padding:4px 11px;font-size:12px;color:var(--green);font-weight:500}
+.notif{width:30px;height:30px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;position:relative;cursor:pointer}
+.ndot{position:absolute;top:4px;right:4px;width:5px;height:5px;background:var(--green);border-radius:50%}
+.av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.content{flex:1;overflow-y:auto}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.screen{display:none}
+.screen.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.bg{background:rgba(0,211,149,0.13);color:var(--green);border:1px solid rgba(0,211,149,0.22)}
+.bb{background:rgba(59,130,246,0.13);color:#60A5FA;border:1px solid rgba(59,130,246,0.22)}
+.bp{background:rgba(124,58,237,0.13);color:#A78BFA;border:1px solid rgba(124,58,237,0.22)}
+.ba{background:rgba(245,158,11,0.13);color:#FCD34D;border:1px solid rgba(245,158,11,0.22)}
+.br{background:rgba(239,68,68,0.13);color:#FCA5A5;border:1px solid rgba(239,68,68,0.22)}
+.pb{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.pf{height:100%;border-radius:2px}
+.g{background:var(--green)}.bl{background:var(--blue)}.pu{background:var(--purple)}
+.btn{border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--green);color:#0A0D12}
+.btn-p:hover{background:var(--green2)}
+.btn-o{background:transparent;color:var(--green);border:1px solid rgba(0,211,149,0.35)}
+.btn-o:hover{background:rgba(0,211,149,0.08)}
+.btn-gh{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-gh:hover{background:rgba(255,255,255,0.04);color:var(--text)}
+.btn-sm{padding:4px 9px;font-size:11px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.sl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;font-weight:600}
+.sv{font-size:21px;font-family:'Space Grotesk',sans-serif;font-weight:700}
+.sc{font-size:11px;color:var(--green);margin-top:2px}
+.roi{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:800;color:var(--green)}
+.div{height:1px;background:var(--border);margin:11px 0}
+.inp{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;width:100%;outline:none}
+.inp:focus{border-color:rgba(0,211,149,0.5)}
+.tr{display:grid;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
+.tr:last-child{border-bottom:none}
+.tab-bar{display:flex;gap:0;background:var(--bg3);border-radius:8px;padding:2px;margin-bottom:14px}
+.tab{flex:1;padding:5px 6px;border-radius:6px;font-size:11px;color:var(--text3);cursor:pointer;text-align:center;transition:all .18s}
+.tab.active{background:var(--card);color:var(--text)}
+.chip{padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;transition:all .18s;border:1px solid var(--border);color:var(--text2)}
+.chip:hover,.chip.active{background:rgba(0,211,149,0.09);border-color:var(--green);color:var(--green)}
+.fs{display:none}.fs.active{display:block}
+.sd{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.sd-done{background:var(--green);color:#0A0D12}
+.sd-active{background:rgba(0,211,149,0.18);border:1px solid var(--green);color:var(--green)}
+.sd-todo{background:var(--bg3);border:1px solid var(--border);color:var(--text3)}
+.sl-line{flex:1;height:1px;background:var(--border)}
+.sl-done{background:var(--green)}
+.admt{width:100%;border-collapse:collapse;font-size:11px}
+.admt th{text-align:left;padding:7px 9px;color:var(--text3);font-weight:500;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase}
+.admt td{padding:7px 9px;border-bottom:1px solid var(--border);color:var(--text2)}
+</style>
+
+<div class="app">
+
+<div class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo-text">PL<span>IT</span></div>
+    <div class="logo-sub">Real Estate · Tokenized</div>
+  </div>
+  <div class="nav-item" id="nv-home" onclick="go('home')"><i class="nav-ic">⬡</i> Landing</div>
+  <div class="nav-item" id="nv-login" onclick="go('login')"><i class="nav-ic">◎</i> Login / Signup</div>
+  <div class="nav-item active" id="nv-dashboard" onclick="go('dashboard')"><i class="nav-ic">▦</i> Dashboard</div>
+  <div class="nav-item" id="nv-explore" onclick="go('explore')"><i class="nav-ic">◈</i> Explorar</div>
+  <div class="nav-item" id="nv-property" onclick="go('property')"><i class="nav-ic">◇</i> Propiedad</div>
+  <div class="nav-item" id="nv-invest" onclick="go('invest')"><i class="nav-ic">◉</i> Invertir</div>
+  <div class="nav-item" id="nv-portfolio" onclick="go('portfolio')"><i class="nav-ic">△</i> Portafolio</div>
+  <div class="nav-item" id="nv-upload" onclick="go('upload')"><i class="nav-ic">⊕</i> Subir prop.</div>
+  <div class="nav-item" id="nv-admin" onclick="go('admin')"><i class="nav-ic">⚙</i> Admin</div>
+  <div style="flex:1"></div>
+  <div style="padding:14px 18px;border-top:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="av">AR</div>
+      <div><div style="font-size:12px;font-weight:500">Ana R.</div><div style="font-size:10px;color:var(--text3)">Inversor Pro</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="search"><span style="font-size:11px">⌕</span><span>Buscar propiedades, tokens...</span></div>
+    <div style="flex:1"></div>
+    <div class="notif">🔔<div class="ndot"></div></div>
+    <div class="wallet">◈ $248,500 MXN</div>
+    <div class="av">AR</div>
+  </div>
+
+  <div class="content">
+
+<!-- ======== HOME / LANDING ======== -->
+<div class="screen" id="screen-home">
+
+  <!-- HERO -->
+  <div style="background:var(--bg2);padding:0;position:relative;overflow:hidden;border-bottom:1px solid var(--border)">
+
+    <!-- BG cityscape SVG -->
+    <svg style="position:absolute;bottom:0;left:0;width:100%;height:180px;opacity:.18" viewBox="0 0 800 180" preserveAspectRatio="none">
+      <rect x="0" y="100" width="40" height="80" fill="#00D395"/>
+      <rect x="5" y="80" width="30" height="20" fill="#00D395"/>
+      <rect x="45" y="120" width="25" height="60" fill="#3B82F6"/>
+      <rect x="75" y="60" width="50" height="120" fill="#00D395"/>
+      <rect x="80" y="40" width="40" height="22" fill="#00D395"/>
+      <rect x="85" y="26" width="30" height="16" fill="#00D395"/>
+      <rect x="90" y="18" width="20" height="10" fill="#00D395"/>
+      <rect x="130" y="90" width="35" height="90" fill="#7C3AED"/>
+      <rect x="170" y="70" width="55" height="110" fill="#3B82F6"/>
+      <rect x="175" y="50" width="45" height="22" fill="#3B82F6"/>
+      <rect x="230" y="100" width="30" height="80" fill="#00D395"/>
+      <rect x="265" y="55" width="60" height="125" fill="#00D395"/>
+      <rect x="270" y="35" width="50" height="22" fill="#00D395"/>
+      <rect x="330" y="85" width="40" height="95" fill="#7C3AED"/>
+      <rect x="375" y="110" width="28" height="70" fill="#3B82F6"/>
+      <rect x="408" y="65" width="55" height="115" fill="#00D395"/>
+      <rect x="413" y="45" width="45" height="22" fill="#00D395"/>
+      <rect x="468" y="95" width="32" height="85" fill="#7C3AED"/>
+      <rect x="505" y="75" width="48" height="105" fill="#3B82F6"/>
+      <rect x="558" y="50" width="60" height="130" fill="#00D395"/>
+      <rect x="563" y="30" width="50" height="22" fill="#00D395"/>
+      <rect x="623" y="90" width="35" height="90" fill="#7C3AED"/>
+      <rect x="663" y="110" width="30" height="70" fill="#3B82F6"/>
+      <rect x="698" y="60" width="50" height="120" fill="#00D395"/>
+      <rect x="703" y="40" width="40" height="22" fill="#00D395"/>
+      <rect x="753" y="100" width="47" height="80" fill="#7C3AED"/>
+    </svg>
+
+    <!-- Green glow blobs -->
+    <div style="position:absolute;top:-80px;left:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(0,211,149,.13) 0%,transparent 70%);pointer-events:none"></div>
+    <div style="position:absolute;top:-40px;right:100px;width:240px;height:240px;background:radial-gradient(circle,rgba(124,58,237,.1) 0%,transparent 70%);pointer-events:none"></div>
+
+    <div style="position:relative;z-index:1;padding:32px 28px 24px">
+      <!-- nav bar inside hero -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:36px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.5px">PL<span style="color:var(--green)">IT</span></div>
+        <div style="display:flex;gap:18px;font-size:12px;color:var(--text2)">
+          <span style="cursor:pointer;transition:color .2s" onmouseover="this.style.color='#F1F5F9'" onmouseout="this.style.color='#94A3B8'">Plataforma</span>
+          <span style="cursor:pointer;transition:color .2s" onmouseover="this.style.color='#F1F5F9'" onmouseout="this.style.color='#94A3B8'">Propiedades</span>
+          <span style="cursor:pointer;transition:color .2s" onmouseover="this.style.color='#F1F5F9'" onmouseout="this.style.color='#94A3B8'">Tokenizar</span>
+          <span style="cursor:pointer;transition:color .2s" onmouseover="this.style.color='#F1F5F9'" onmouseout="this.style.color='#94A3B8'">Nosotros</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-gh btn-sm" onclick="go('login')">Entrar</button>
+          <button class="btn btn-p btn-sm" onclick="go('login')">Empezar</button>
+        </div>
+      </div>
+
+      <!-- HERO content -->
+      <div style="display:flex;gap:24px;align-items:flex-start">
+        <div style="flex:1.1">
+          <div class="badge bg" style="margin-bottom:14px;font-size:11px">
+            <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#00D395"/></svg>
+            Plataforma #1 en tokenización inmobiliaria en México
+          </div>
+          <h1 style="font-size:30px;font-weight:800;line-height:1.1;margin-bottom:12px;letter-spacing:-.5px">
+            Invierte en los mejores<br>
+            <span style="color:var(--green)">bienes raíces</span> del país<br>
+            desde $1,000 MXN
+          </h1>
+          <p style="color:var(--text2);font-size:13px;line-height:1.7;margin-bottom:22px;max-width:340px">
+            PLIT tokeniza propiedades premium y te permite invertir, recibir rendimientos y vender en segundos. Sin bancos, sin complicaciones.
+          </p>
+          <div style="display:flex;gap:10px;margin-bottom:28px">
+            <button class="btn btn-p" onclick="go('login')" style="font-size:13px;padding:10px 20px">Explorar inversiones</button>
+            <button class="btn btn-o" onclick="go('upload')" style="font-size:13px;padding:10px 20px">Tokenizar mi propiedad</button>
+          </div>
+          <!-- trust bar -->
+          <div style="display:flex;gap:20px">
+            <div><div style="font-size:18px;font-weight:800;color:var(--green)">$2.1B+</div><div style="font-size:10px;color:var(--text3)">En propiedades</div></div>
+            <div style="width:1px;background:var(--border)"></div>
+            <div><div style="font-size:18px;font-weight:800">15.4%</div><div style="font-size:10px;color:var(--text3)">ROI promedio</div></div>
+            <div style="width:1px;background:var(--border)"></div>
+            <div><div style="font-size:18px;font-weight:800">12,400+</div><div style="font-size:10px;color:var(--text3)">Inversores</div></div>
+            <div style="width:1px;background:var(--border)"></div>
+            <div><div style="font-size:18px;font-weight:800">98%</div><div style="font-size:10px;color:var(--text3)">Satisfacción</div></div>
+          </div>
+        </div>
+
+        <!-- hero right: live cards -->
+        <div style="flex:.9;display:flex;flex-direction:column;gap:8px">
+          <!-- property card -->
+          <div style="background:rgba(24,32,48,.85);border:1px solid var(--border2);border-radius:14px;overflow:hidden">
+            <svg width="100%" height="80" viewBox="0 0 300 80" preserveAspectRatio="xMidYMid slice">
+              <rect width="300" height="80" fill="#0d1e14"/>
+              <rect x="0" y="40" width="30" height="40" fill="#1a3a2a" rx="2"/>
+              <rect x="5" y="30" width="20" height="12" fill="#1a3a2a" rx="1"/>
+              <rect x="35" y="50" width="25" height="30" fill="#142e1e" rx="2"/>
+              <rect x="65" y="20" width="45" height="60" fill="#1f4a2e" rx="2"/>
+              <rect x="68" y="10" width="39" height="12" fill="#1f4a2e" rx="1"/>
+              <rect x="115" y="35" width="35" height="45" fill="#163322" rx="2"/>
+              <rect x="155" y="15" width="55" height="65" fill="#1a3d28" rx="2"/>
+              <rect x="158" y="5" width="49" height="12" fill="#1a3d28" rx="1"/>
+              <rect x="215" y="45" width="30" height="35" fill="#143020" rx="2"/>
+              <rect x="250" y="25" width="50" height="55" fill="#1f4a2e" rx="2"/>
+              <rect x="253" y="15" width="44" height="12" fill="#1f4a2e" rx="1"/>
+              <rect x="0" y="68" width="300" height="12" fill="#091208" opacity=".9"/>
+              <circle cx="250" cy="18" r="3" fill="#00D395" opacity=".7"/>
+              <circle cx="175" cy="8" r="2" fill="#00D395" opacity=".5"/>
+            </svg>
+            <div style="padding:10px 12px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+                <div>
+                  <div style="font-size:12px;font-weight:600">Torre Reforma 222</div>
+                  <div style="font-size:10px;color:var(--text3)">Santa Fe, CDMX</div>
+                </div>
+                <div class="roi" style="font-size:18px">16.2%</div>
+              </div>
+              <div class="pb"><div class="pf g" style="width:78%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px"><span>78% financiado</span><span>Token: $125 MXN</span></div>
+            </div>
+          </div>
+
+          <!-- token flow card -->
+          <div style="background:rgba(24,32,48,.85);border:1px solid var(--border2);border-radius:12px;padding:11px 13px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px">Flujo de tokenización</div>
+            <div style="display:flex;align-items:center;gap:0">
+              <div style="text-align:center;flex:1">
+                <div style="width:32px;height:32px;border-radius:8px;background:rgba(0,211,149,.15);border:1px solid rgba(0,211,149,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:14px">🏢</div>
+                <div style="font-size:9px;color:var(--text3)">Propiedad</div>
+              </div>
+              <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--green),var(--blue));position:relative">
+                <div style="position:absolute;top:-4px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite"></div>
+              </div>
+              <div style="text-align:center;flex:1">
+                <div style="width:32px;height:32px;border-radius:8px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:14px">🪙</div>
+                <div style="font-size:9px;color:var(--text3)">Tokens</div>
+              </div>
+              <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--blue),var(--purple));position:relative">
+                <div style="position:absolute;top:-4px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse 1.5s .5s infinite"></div>
+              </div>
+              <div style="text-align:center;flex:1">
+                <div style="width:32px;height:32px;border-radius:8px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:14px">📈</div>
+                <div style="font-size:9px;color:var(--text3)">Rendimientos</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- live activity -->
+          <div style="background:rgba(24,32,48,.85);border:1px solid var(--border2);border-radius:12px;padding:11px 13px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px">Actividad en vivo</div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--green)">
+                <div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1s infinite"></div>
+                En vivo
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700">JM</div>
+                <span style="color:var(--text2);flex:1">Javier M. invirtió <span style="color:var(--green)">$25,000</span> en Playa Mita</span>
+                <span style="color:var(--text3)">2m</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#00D395,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700">SG</div>
+                <span style="color:var(--text2);flex:1">Sofía G. vendió <span style="color:var(--blue)">80 tokens</span> TREF</span>
+                <span style="color:var(--text3)">5m</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES FOR 2 AUDIENCES -->
+  <div style="padding:20px 24px;background:var(--bg)">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">¿Para quién es PLIT?</div>
+      <h2 style="font-size:18px;font-weight:700">Dos formas de ganar con bienes raíces</h2>
+    </div>
+    <div class="g2" style="margin-bottom:20px">
+      <!-- INVERSIONISTAS -->
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:14px;overflow:hidden">
+        <div style="background:linear-gradient(135deg,rgba(0,211,149,.12),rgba(59,130,246,.08));padding:16px 16px 12px;border-bottom:1px solid var(--border)">
+          <div class="badge bg" style="margin-bottom:8px">Para Inversionistas</div>
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Haz crecer tu dinero</h3>
+          <p style="font-size:11px;color:var(--text2);line-height:1.6">Accede a propiedades exclusivas con tickets pequeños y rendimientos reales.</p>
+        </div>
+        <div style="padding:14px 16px">
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px">
+              <div style="width:18px;height:18px;border-radius:5px;background:rgba(0,211,149,.15);border:1px solid rgba(0,211,149,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--green)">✓</div>
+              <div><span style="font-weight:500">Desde $1,000 MXN</span> — Sin montos mínimos absurdos</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px">
+              <div style="width:18px;height:18px;border-radius:5px;background:rgba(0,211,149,.15);border:1px solid rgba(0,211,149,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--green)">✓</div>
+              <div><span style="font-weight:500">ROI 12%–22% anual</span> — Validado por auditores</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px">
+              <div style="width:18px;height:18px;border-radius:5px;background:rgba(0,211,149,.15);border:1px solid rgba(0,211,149,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--green)">✓</div>
+              <div><span style="font-weight:500">Liquidez real</span> — Vende tokens en el mercado secundario</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px">
+              <div style="width:18px;height:18px;border-radius:5px;background:rgba(0,211,149,.15);border:1px solid rgba(0,211,149,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--green)">✓</div>
+              <div><span style="font-weight:500">100% digital</span> — Firma, invierte y cobra en la app</div>
+            </div>
+          </div>
+          <button class="btn btn-p" style="width:100%;margin-top:14px;font-size:12px" onclick="go('login')">Empezar a invertir →</button>
+        </div>
+      </div>
+      <!-- PROPIETARIOS -->
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:14px;overflow:hidden">
+        <div style="background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(59,130,246,.08));padding:16px 16px 12px;border-bottom:1px solid var(--border)">
+          <div class="badge bp" style="margin-bottom:8px">Para Propietarios</div>
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Liquidez sin vender</h3>
+          <p style="font-size:11px;color:var(--text2);line-height:1.6">Tokeniza tu propiedad, obtén capital y mantén el control de tu activo.</p>
+        </div>
+        <div style="padding:14px 16px">
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px">
+              <div style="width:18px;height:18px;border-radius:5px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:#A78BFA">✓</div>
+              <div><span style="font-weight:500">Sin vender tu propiedad</span> — Obtienes capital inmediato</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px">
+              <div style="width:18px;height:18px;border-radius:5px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:#A78BFA">✓</div>
+              <div><span style="font-weight:500">Proceso 100% digital</span> — De 4 a 6 semanas</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px">
+              <div style="width:18px;height:18px;border-radius:5px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:#A78BFA">✓</div>
+              <div><span style="font-weight:500">Fideicomiso en garantía</span> — Marco legal blindado</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px">
+              <div style="width:18px;height:18px;border-radius:5px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:#A78BFA">✓</div>
+              <div><span style="font-weight:500">Acceso a +12,000 inversores</span> — Red activa PLIT</div>
+            </div>
+          </div>
+          <button class="btn btn-o" style="width:100%;margin-top:14px;font-size:12px;border-color:rgba(124,58,237,.4);color:#A78BFA" onclick="go('upload')">Tokenizar propiedad →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured properties visual row -->
+    <div style="margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="sl" style="margin-bottom:0">Propiedades destacadas</div>
+        <button class="btn btn-gh btn-sm" onclick="go('explore')">Ver todas →</button>
+      </div>
+      <div class="g3">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer" onclick="go('property')">
+          <svg width="100%" height="70" viewBox="0 0 200 70" preserveAspectRatio="xMidYMid slice">
+            <rect width="200" height="70" fill="#091408"/>
+            <rect x="0" y="30" width="22" height="40" fill="#163020" rx="1"/>
+            <rect x="25" y="40" width="18" height="30" fill="#0f2518" rx="1"/>
+            <rect x="46" y="10" width="38" height="60" fill="#1a3a24" rx="2"/>
+            <rect x="48" y="2" width="34" height="10" fill="#1a3a24" rx="1"/>
+            <rect x="88" y="25" width="28" height="45" fill="#122a1a" rx="1"/>
+            <rect x="120" y="5" width="45" height="65" fill="#1f4530" rx="2"/>
+            <rect x="122" y="-2" width="41" height="9" fill="#1f4530" rx="1"/>
+            <rect x="169" y="35" width="31" height="35" fill="#163020" rx="1"/>
+            <rect x="0" y="58" width="200" height="12" fill="#060e09" opacity=".95"/>
+            <circle cx="140" cy="8" r="3" fill="#00D395" opacity=".8"/>
+          </svg>
+          <div style="padding:9px 11px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <div style="font-size:12px;font-weight:600">Torre Reforma 222</div>
+              <div class="roi" style="font-size:16px">16.2%</div>
+            </div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:5px">CDMX · Comercial</div>
+            <div class="pb"><div class="pf g" style="width:78%"></div></div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px">78% financiado</div>
+          </div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer" onclick="go('property')">
+          <svg width="100%" height="70" viewBox="0 0 200 70" preserveAspectRatio="xMidYMid slice">
+            <rect width="200" height="70" fill="#081420"/>
+            <rect x="0" y="0" width="200" height="70" fill="url(#sea)"/>
+            <defs><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a1e38"/><stop offset="100%" stop-color="#061020"/></linearGradient></defs>
+            <ellipse cx="50" cy="50" rx="50" ry="15" fill="#0d2040"/>
+            <ellipse cx="160" cy="55" rx="45" ry="12" fill="#0a1a35"/>
+            <rect x="60" y="28" width="80" height="35" fill="#102848" rx="4"/>
+            <rect x="70" y="18" width="60" height="12" fill="#0e2240" rx="2"/>
+            <rect x="80" y="12" width="40" height="8" fill="#0c1e38" rx="1"/>
+            <rect x="65" y="38" width="12" height="20" fill="#1a3a60" rx="1"/>
+            <rect x="82" y="38" width="12" height="20" fill="#1a3a60" rx="1"/>
+            <rect x="99" y="38" width="12" height="20" fill="#1a3a60" rx="1"/>
+            <rect x="116" y="38" width="12" height="20" fill="#1a3a60" rx="1"/>
+            <path d="M55 45 Q100 40 145 45" stroke="#3B82F6" stroke-width="1.5" fill="none" opacity=".4"/>
+            <circle cx="100" cy="20" r="4" fill="#3B82F6" opacity=".6"/>
+          </svg>
+          <div style="padding:9px 11px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <div style="font-size:12px;font-weight:600">Playa Mita Resort</div>
+              <div class="roi" style="font-size:16px">18.8%</div>
+            </div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:5px">Nayarit · Turístico</div>
+            <div class="pb"><div class="pf bl" style="width:45%"></div></div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px">45% financiado</div>
+          </div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer" onclick="go('property')">
+          <svg width="100%" height="70" viewBox="0 0 200 70" preserveAspectRatio="xMidYMid slice">
+            <rect width="200" height="70" fill="#140820"/>
+            <rect x="10" y="40" width="25" height="30" fill="#2a1050" rx="2"/>
+            <rect x="38" y="25" width="40" height="45" fill="#1e0c3c" rx="2"/>
+            <rect x="40" y="15" width="36" height="12" fill="#1e0c3c" rx="1"/>
+            <rect x="82" y="10" width="55" height="60" fill="#2e1260" rx="2"/>
+            <rect x="84" y="2" width="51" height="10" fill="#2e1260" rx="1"/>
+            <rect x="141" y="30" width="30" height="40" fill="#1a0a40" rx="2"/>
+            <rect x="175" y="45" width="25" height="25" fill="#240e50" rx="2"/>
+            <rect x="0" y="60" width="200" height="10" fill="#0a0514" opacity=".9"/>
+            <circle cx="110" cy="5" r="4" fill="#7C3AED" opacity=".7"/>
+            <circle cx="90" cy="14" r="2" fill="#A78BFA" opacity=".5"/>
+          </svg>
+          <div style="padding:9px 11px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <div style="font-size:12px;font-weight:600">GDL Polanco West</div>
+              <div class="roi" style="font-size:16px">14.1%</div>
+            </div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:5px">Jalisco · Desarrollo</div>
+            <div class="pb"><div class="pf pu" style="width:32%"></div></div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px">32% financiado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social proof -->
+    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:16px;text-align:center">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px">Respaldado por</div>
+      <div style="display:flex;justify-content:center;gap:28px;align-items:center">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text3)">SOFTBANK</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text3)">Y COMBINATOR</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text3)">CNBV</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text3)">BBVA VENTURES</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== LOGIN / SIGNUP ======== -->
+<div class="screen" id="screen-login">
+  <div style="min-height:600px;background:var(--bg);display:flex">
+
+    <!-- left visual panel -->
+    <div style="flex:1;background:var(--bg2);border-right:1px solid var(--border);padding:28px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden">
+
+      <div style="position:absolute;top:-60px;left:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(0,211,149,.12) 0%,transparent 70%);pointer-events:none"></div>
+      <div style="position:absolute;bottom:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,.1) 0%,transparent 70%);pointer-events:none"></div>
+
+      <div style="position:relative;z-index:1">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;margin-bottom:28px">PL<span style="color:var(--green)">IT</span></div>
+
+        <!-- building visual -->
+        <svg width="100%" height="160" viewBox="0 0 240 160" preserveAspectRatio="xMidYMid meet" style="margin-bottom:20px">
+          <rect x="20" y="80" width="30" height="80" fill="#1a3a24" rx="3"/>
+          <rect x="22" y="65" width="26" height="17" fill="#1a3a24" rx="2"/>
+          <rect x="55" y="50" width="50" height="110" fill="#1f4a2e" rx="3"/>
+          <rect x="57" y="35" width="46" height="17" fill="#1f4a2e" rx="2"/>
+          <rect x="57" y="22" width="46" height="15" fill="#1a3f28" rx="2"/>
+          <rect x="110" y="70" width="35" height="90" fill="#163322" rx="3"/>
+          <rect x="150" y="30" width="60" height="130" fill="#1d4530" rx="3"/>
+          <rect x="152" y="15" width="56" height="17" fill="#1d4530" rx="2"/>
+          <rect x="152" y="5" width="56" height="12" fill="#183c28" rx="2"/>
+          <rect x="215" y="90" width="25" height="70" fill="#1a3a24" rx="2"/>
+          <rect x="0" y="148" width="240" height="12" fill="#060e09"/>
+          <circle cx="180" cy="8" r="5" fill="#00D395" opacity=".8"/>
+          <circle cx="80" cy="25" r="3" fill="#00D395" opacity=".5"/>
+          <line x1="180" y1="8" x2="80" y2="25" stroke="#00D395" stroke-width=".8" opacity=".3"/>
+          <rect x="60" y="60" width="8" height="8" fill="#00D395" opacity=".5" rx="1"/>
+          <rect x="75" y="55" width="8" height="8" fill="#00D395" opacity=".4" rx="1"/>
+          <rect x="90" y="60" width="8" height="8" fill="#3B82F6" opacity=".5" rx="1"/>
+          <rect x="60" y="74" width="8" height="8" fill="#3B82F6" opacity=".4" rx="1"/>
+          <rect x="155" y="40" width="10" height="10" fill="#00D395" opacity=".5" rx="1"/>
+          <rect x="172" y="36" width="10" height="10" fill="#7C3AED" opacity=".5" rx="1"/>
+          <rect x="189" y="40" width="10" height="10" fill="#3B82F6" opacity=".4" rx="1"/>
+        </svg>
+
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:8px">El futuro del real estate es digital</h2>
+        <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:18px">Únete a más de 12,400 inversores que ya generan rendimientos con propiedades tokenizadas en México.</p>
+
+        <!-- stats -->
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="background:rgba(0,211,149,.07);border:1px solid rgba(0,211,149,.15);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px">
+            <div style="font-size:20px;font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--green)">15.4%</div>
+            <div style="font-size:11px;color:var(--text2)">ROI promedio anual validado por auditores independientes</div>
+          </div>
+          <div style="background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px">
+            <div style="font-size:20px;font-family:'Space Grotesk',sans-serif;font-weight:800;color:#60A5FA">$2.1B+</div>
+            <div style="font-size:11px;color:var(--text2)">En activos inmobiliarios bajo administración en la plataforma</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:10px;color:var(--text3);position:relative;z-index:1">
+        Regulado bajo CNBV · Fideicomiso garantizado · Datos cifrados
+      </div>
+    </div>
+
+    <!-- right auth panel -->
+    <div style="flex:1;padding:28px;display:flex;flex-direction:column;justify-content:center">
+      <div id="auth-tabs" style="display:flex;gap:0;background:var(--bg3);border-radius:10px;padding:3px;margin-bottom:22px">
+        <div id="tab-login" onclick="switchAuth('login')" style="flex:1;text-align:center;padding:7px;border-radius:7px;font-size:13px;cursor:pointer;background:var(--card);color:var(--text);font-weight:500;transition:all .2s">Iniciar sesión</div>
+        <div id="tab-signup" onclick="switchAuth('signup')" style="flex:1;text-align:center;padding:7px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--text2);transition:all .2s">Crear cuenta</div>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="form-login">
+        <div style="margin-bottom:14px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:5px">Correo electrónico</div>
+          <input class="inp" type="email" placeholder="ana@email.com" id="email-inp">
+        </div>
+        <div style="margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <div style="font-size:11px;color:var(--text3)">Contraseña</div>
+            <div style="font-size:11px;color:var(--green);cursor:pointer">¿Olvidaste tu contraseña?</div>
+          </div>
+          <input class="inp" type="password" placeholder="••••••••" id="pass-inp">
+        </div>
+        <div style="margin-bottom:16px;font-size:11px;color:var(--text3)" id="login-err" style="display:none"></div>
+        <button class="btn btn-p" style="width:100%;padding:11px;font-size:14px;font-weight:600;margin-bottom:12px" onclick="doLogin()">Entrar a PLIT</button>
+        <div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:12px">o continúa con</div>
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <button class="btn btn-gh" style="flex:1;font-size:12px">G Google</button>
+          <button class="btn btn-gh" style="flex:1;font-size:12px">⊞ Microsoft</button>
+        </div>
+        <div style="font-size:11px;color:var(--text3);text-align:center">
+          ¿No tienes cuenta? <span style="color:var(--green);cursor:pointer" onclick="switchAuth('signup')">Regístrate gratis</span>
+        </div>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="form-signup" style="display:none">
+        <div class="g2" style="margin-bottom:12px">
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:5px">Nombre</div>
+            <input class="inp" type="text" placeholder="Ana">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:5px">Apellido</div>
+            <input class="inp" type="text" placeholder="Rodríguez">
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:5px">Correo electrónico</div>
+          <input class="inp" type="email" placeholder="ana@email.com">
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:5px">Contraseña</div>
+          <input class="inp" type="password" placeholder="Mínimo 8 caracteres">
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Soy principalmente:</div>
+          <div style="display:flex;gap:7px">
+            <div id="role-inv" onclick="selectRole('inv')" style="flex:1;padding:8px;border-radius:9px;border:1px solid var(--green);background:rgba(0,211,149,.08);text-align:center;cursor:pointer">
+              <div style="font-size:16px;margin-bottom:3px">💰</div>
+              <div style="font-size:11px;font-weight:500;color:var(--green)">Inversionista</div>
+            </div>
+            <div id="role-own" onclick="selectRole('own')" style="flex:1;padding:8px;border-radius:9px;border:1px solid var(--border);background:transparent;text-align:center;cursor:pointer">
+              <div style="font-size:16px;margin-bottom:3px">🏢</div>
+              <div style="font-size:11px;font-weight:500;color:var(--text2)">Propietario</div>
+            </div>
+            <div id="role-both" onclick="selectRole('both')" style="flex:1;padding:8px;border-radius:9px;border:1px solid var(--border);background:transparent;text-align:center;cursor:pointer">
+              <div style="font-size:16px;margin-bottom:3px">⚡</div>
+              <div style="font-size:11px;font-weight:500;color:var(--text2)">Ambos</div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-p" style="width:100%;padding:11px;font-size:14px;font-weight:600;margin-bottom:10px" onclick="go('dashboard')">Crear cuenta gratis</button>
+        <div style="font-size:10px;color:var(--text3);text-align:center;line-height:1.6">
+          Al crear tu cuenta aceptas los <span style="color:var(--green)">Términos de servicio</span> y la <span style="color:var(--green)">Política de privacidad</span> de PLIT
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== DASHBOARD ======== -->
+<div class="screen active" id="screen-dashboard">
+  <div style="padding:18px">
+    <div style="margin-bottom:14px"><div style="font-size:15px;font-weight:600">Buen día, Ana 👋</div><div style="font-size:12px;color:var(--text3)">Tu portafolio está rindiendo bien este mes</div></div>
+    <div class="g4" style="margin-bottom:14px">
+      <div class="card"><div class="sl">Total invertido</div><div class="sv">$248.5k</div><div class="sc">+12.3% este año</div></div>
+      <div class="card"><div class="sl">Rendimiento</div><div class="sv" style="color:var(--green)">$38.2k</div><div class="sc">+$2.8k este mes</div></div>
+      <div class="card"><div class="sl">Tokens</div><div class="sv">1,847</div><div class="sc" style="color:var(--text3)">En 5 propiedades</div></div>
+      <div class="card"><div class="sl">ROI actual</div><div class="sv" style="color:var(--blue)">15.4%</div><div class="sc">Promedio anual</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="sl">Evolución del portafolio</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+          <div style="font-size:18px;font-weight:700;color:var(--green)">$286,700</div>
+          <div style="font-size:11px;color:var(--green)">+15.4%</div>
+        </div>
+        <svg width="100%" height="65" viewBox="0 0 220 65" style="overflow:visible">
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00D395" stop-opacity=".18"/><stop offset="100%" stop-color="#00D395" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,58 L25,53 L50,43 L75,40 L100,33 L125,26 L150,20 L175,16 L200,12 L220,8" fill="none" stroke="#00D395" stroke-width="2"/>
+          <path d="M0,58 L25,53 L50,43 L75,40 L100,33 L125,26 L150,20 L175,16 L200,12 L220,8 L220,65 L0,65Z" fill="url(#lg)"/>
+          <circle cx="220" cy="8" r="3" fill="#00D395"/>
+        </svg>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px"><span>Ene</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span><span>Nov</span><span>Hoy</span></div>
+      </div>
+      <div class="card">
+        <div class="sl">Distribución</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <svg width="65" height="65" viewBox="0 0 65 65">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#182030" stroke-width="11"/>
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#00D395" stroke-width="11" stroke-dasharray="82 81" stroke-dashoffset="-20" transform="rotate(-90 32 32)"/>
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#3B82F6" stroke-width="11" stroke-dasharray="49 114" stroke-dashoffset="-102" transform="rotate(-90 32 32)"/>
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#7C3AED" stroke-width="11" stroke-dasharray="32 131" stroke-dashoffset="-151" transform="rotate(-90 32 32)"/>
+          </svg>
+          <div style="font-size:11px;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span>Comercial 50%</div>
+            <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block"></span>Residencial 30%</div>
+            <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--purple);display:inline-block"></span>Turístico 20%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sl">Inversiones activas</div>
+      <div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 80px"><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Propiedad</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Valor</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">ROI</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Tokens</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Estado</div></div>
+      <div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 80px"><div style="font-size:12px;font-weight:500">Torre Reforma 222</div><div style="font-size:12px">$89,200</div><div style="font-size:12px;color:var(--green)">16.2%</div><div style="font-size:12px">720</div><div><span class="badge bg">Activo</span></div></div>
+      <div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 80px"><div style="font-size:12px;font-weight:500">Playa Mita Resort</div><div style="font-size:12px">$120,000</div><div style="font-size:12px;color:var(--green)">18.8%</div><div style="font-size:12px">960</div><div><span class="badge bb">Preventa</span></div></div>
+      <div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 80px"><div style="font-size:12px;font-weight:500">Monterrey Centro</div><div style="font-size:12px">$39,300</div><div style="font-size:12px;color:var(--green)">12.5%</div><div style="font-size:12px">167</div><div><span class="badge bg">Activo</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== EXPLORE ======== -->
+<div class="screen" id="screen-explore">
+  <div style="padding:18px">
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+      <div class="chip active">Todos</div><div class="chip">Comercial</div><div class="chip">Residencial</div><div class="chip">Turístico</div>
+      <div style="flex:1"></div><div class="chip">ROI mayor</div><div class="chip">Bajo riesgo</div>
+    </div>
+    <div class="g2">
+      <div class="card" style="padding:11px;cursor:pointer" onclick="go('property')">
+        <div style="position:relative;margin-bottom:9px">
+          <svg width="100%" height="90" viewBox="0 0 240 90" preserveAspectRatio="xMidYMid slice" style="border-radius:8px;display:block">
+            <rect width="240" height="90" fill="#091408"/>
+            <rect x="0" y="40" width="28" height="50" fill="#163020" rx="2"/><rect x="32" y="52" width="20" height="38" fill="#0f2518" rx="1"/>
+            <rect x="55" y="12" width="46" height="78" fill="#1a3a24" rx="3"/><rect x="57" y="2" width="42" height="12" fill="#1a3a24" rx="1"/>
+            <rect x="105" y="30" width="32" height="60" fill="#122a1a" rx="2"/>
+            <rect x="141" y="5" width="58" height="85" fill="#1f4530" rx="3"/><rect x="143" y="-3" width="54" height="10" fill="#1f4530" rx="1"/>
+            <rect x="203" y="42" width="37" height="48" fill="#163020" rx="2"/>
+            <rect x="0" y="78" width="240" height="12" fill="#060e09" opacity=".95"/>
+            <circle cx="170" cy="6" r="5" fill="#00D395" opacity=".8"/>
+          </svg>
+          <div style="position:absolute;top:6px;left:6px"><span class="badge ba">🔥 Hot</span></div>
+          <div style="position:absolute;top:6px;right:6px"><span class="badge bg">Bajo riesgo</span></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">Torre Reforma 222</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:7px">Santa Fe, CDMX</div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:5px"><div class="roi">16.2%</div><div style="font-size:11px;color:var(--text3)">ROI anual</div></div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Token: $125 MXN</div>
+        <div class="pb" style="margin-bottom:3px"><div class="pf g" style="width:78%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>78% financiado</span><span>$2.8M restante</span></div>
+      </div>
+      <div class="card" style="padding:11px;cursor:pointer" onclick="go('property')">
+        <div style="position:relative;margin-bottom:9px">
+          <svg width="100%" height="90" viewBox="0 0 240 90" preserveAspectRatio="xMidYMid slice" style="border-radius:8px;display:block">
+            <rect width="240" height="90" fill="#081420"/>
+            <ellipse cx="60" cy="68" rx="55" ry="18" fill="#0d2040"/><ellipse cx="190" cy="72" rx="55" ry="14" fill="#0a1a35"/>
+            <rect x="70" y="30" width="100" height="50" fill="#102848" rx="5"/><rect x="80" y="18" width="80" height="14" fill="#0e2240" rx="2"/><rect x="90" y="10" width="60" height="10" fill="#0c1e38" rx="1"/>
+            <rect x="75" y="44" width="14" height="30" fill="#1a3a60" rx="1"/><rect x="96" y="44" width="14" height="30" fill="#1a3a60" rx="1"/><rect x="117" y="44" width="14" height="30" fill="#1a3a60" rx="1"/><rect x="138" y="44" width="14" height="30" fill="#1a3a60" rx="1"/>
+            <circle cx="120" cy="22" r="5" fill="#3B82F6" opacity=".7"/>
+          </svg>
+          <div style="position:absolute;top:6px;right:6px"><span class="badge bb">Nuevo</span></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">Playa Mita Resort</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:7px">Punta Mita, Nayarit</div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:5px"><div class="roi">18.8%</div><div style="font-size:11px;color:var(--text3)">ROI anual</div></div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Token: $200 MXN</div>
+        <div class="pb" style="margin-bottom:3px"><div class="pf bl" style="width:45%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>45% financiado</span><span>$5.5M restante</span></div>
+      </div>
+      <div class="card" style="padding:11px;cursor:pointer" onclick="go('property')">
+        <div style="position:relative;margin-bottom:9px">
+          <svg width="100%" height="90" viewBox="0 0 240 90" preserveAspectRatio="xMidYMid slice" style="border-radius:8px;display:block">
+            <rect width="240" height="90" fill="#140820"/>
+            <rect x="15" y="48" width="28" height="42" fill="#2a1050" rx="2"/><rect x="47" y="30" width="42" height="60" fill="#1e0c3c" rx="2"/><rect x="49" y="20" width="38" height="12" fill="#1e0c3c" rx="1"/>
+            <rect x="93" y="10" width="58" height="80" fill="#2e1260" rx="3"/><rect x="95" y="2" width="54" height="10" fill="#2e1260" rx="1"/>
+            <rect x="155" y="35" width="34" height="55" fill="#1a0a40" rx="2"/><rect x="193" y="52" width="47" height="38" fill="#240e50" rx="2"/>
+            <rect x="0" y="78" width="240" height="12" fill="#0a0514" opacity=".9"/>
+            <circle cx="122" cy="5" r="5" fill="#7C3AED" opacity=".8"/>
+          </svg>
+          <div style="position:absolute;top:6px;left:6px"><span class="badge bp">Desarrollo</span></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">GDL Polanco West</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:7px">Zapopan, Jalisco</div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:5px"><div class="roi">14.1%</div><div style="font-size:11px;color:var(--text3)">ROI anual</div></div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Token: $150 MXN</div>
+        <div class="pb" style="margin-bottom:3px"><div class="pf pu" style="width:32%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>32% financiado</span><span>Preventa activa</span></div>
+      </div>
+      <div class="card" style="padding:11px;cursor:pointer" onclick="go('property')">
+        <div style="position:relative;margin-bottom:9px">
+          <svg width="100%" height="90" viewBox="0 0 240 90" preserveAspectRatio="xMidYMid slice" style="border-radius:8px;display:block">
+            <rect width="240" height="90" fill="#140c08"/>
+            <rect x="10" y="50" width="35" height="40" fill="#3a1a0a" rx="2"/><rect x="48" y="32" width="50" height="58" fill="#2e1408" rx="3"/><rect x="50" y="22" width="46" height="12" fill="#2e1408" rx="1"/>
+            <rect x="102" y="18" width="60" height="72" fill="#3d1c0c" rx="3"/><rect x="104" y="8" width="56" height="12" fill="#3d1c0c" rx="1"/>
+            <rect x="166" y="38" width="38" height="52" fill="#2a1208" rx="2"/><rect x="208" y="55" width="32" height="35" fill="#331608" rx="2"/>
+            <rect x="0" y="78" width="240" height="12" fill="#0a0604" opacity=".9"/>
+            <circle cx="132" cy="11" r="5" fill="#F59E0B" opacity=".8"/>
+          </svg>
+          <div style="position:absolute;top:6px;left:6px"><span class="badge bg">Bajo riesgo</span></div>
+          <div style="position:absolute;top:6px;right:6px"><span class="badge ba">Premium</span></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">Monterrey Centro</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:7px">Centro, Monterrey</div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:5px"><div class="roi">12.5%</div><div style="font-size:11px;color:var(--text3)">ROI anual</div></div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Token: $80 MXN</div>
+        <div class="pb" style="margin-bottom:3px"><div class="pf g" style="width:92%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>92% financiado</span><span>$800k restante</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PROPERTY DETAIL ======== -->
+<div class="screen" id="screen-property">
+  <div style="padding:18px;display:flex;gap:14px;align-items:flex-start">
+    <div style="flex:1">
+      <svg width="100%" height="130" viewBox="0 0 400 130" preserveAspectRatio="xMidYMid slice" style="border-radius:12px;display:block;margin-bottom:12px">
+        <rect width="400" height="130" fill="#091408"/>
+        <rect x="0" y="65" width="45" height="65" fill="#163020" rx="3"/><rect x="4" y="50" width="37" height="17" fill="#163020" rx="2"/>
+        <rect x="50" y="20" width="75" height="110" fill="#1a3a24" rx="4"/><rect x="53" y="5" width="69" height="17" fill="#1a3a24" rx="2"/>
+        <rect x="130" y="50" width="55" height="80" fill="#122a1a" rx="3"/>
+        <rect x="190" y="5" width="95" height="125" fill="#1f4530" rx="4"/><rect x="193" y="-5" width="89" height="12" fill="#1f4530" rx="2"/>
+        <rect x="290" y="60" width="55" height="70" fill="#163020" rx="3"/>
+        <rect x="350" y="80" width="50" height="50" fill="#1a3a24" rx="2"/>
+        <rect x="0" y="115" width="400" height="15" fill="#060e09" opacity=".95"/>
+        <circle cx="237" cy="6" r="7" fill="#00D395" opacity=".8"/>
+        <circle cx="80" cy="8" r="4" fill="#00D395" opacity=".5"/>
+        <line x1="237" y1="6" x2="80" y2="8" stroke="#00D395" stroke-width="1" opacity=".3"/>
+        <rect x="60" y="35" width="10" height="10" fill="#00D395" opacity=".5" rx="1"/>
+        <rect x="78" y="30" width="10" height="10" fill="#3B82F6" opacity=".4" rx="1"/>
+        <rect x="200" y="22" width="12" height="12" fill="#00D395" opacity=".5" rx="1"/>
+        <rect x="220" y="18" width="12" height="12" fill="#7C3AED" opacity=".4" rx="1"/>
+      </svg>
+      <div class="tab-bar"><div class="tab active">Overview</div><div class="tab">Finanzas</div><div class="tab">Documentos</div><div class="tab">Riesgos</div></div>
+      <div class="card" style="margin-bottom:10px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:6px">Torre Reforma 222 — CDMX</div>
+        <p style="font-size:12px;color:var(--text2);line-height:1.6">Edificio corporativo clase A+ en el corredor financiero de Santa Fe. 32 pisos, 18,000 m². Contratos con empresas Fortune 500 a largo plazo.</p>
+        <div class="div"></div>
+        <div class="g3"><div><div class="sl">Tipo</div><div style="font-size:12px;font-weight:500">Comercial</div></div><div><div class="sl">Superficie</div><div style="font-size:12px;font-weight:500">18,000 m²</div></div><div><div class="sl">Ocupación</div><div style="font-size:12px;font-weight:500;color:var(--green)">97%</div></div></div>
+      </div>
+      <div class="card">
+        <div class="sl">Timeline</div>
+        <div style="display:flex;flex-direction:column;gap:9px;font-size:11px">
+          <div style="display:flex;align-items:center;gap:8px"><div style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0"></div><div style="flex:1;color:var(--text2)">Apertura para inversores</div><div style="color:var(--text3)">Feb 2025</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><div style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0"></div><div style="flex:1;color:var(--text2)">Cierre del financiamiento</div><div style="color:var(--text3)">Jun 2025</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><div style="width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0"></div><div style="flex:1;color:var(--text3)">Primer pago de rendimientos</div><div style="color:var(--text3)">Ago 2025</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="width:175px;flex-shrink:0">
+      <div class="card">
+        <div class="roi" style="text-align:center;margin-bottom:3px">16.2%</div>
+        <div style="text-align:center;font-size:10px;color:var(--text3);margin-bottom:12px">ROI anual estimado</div>
+        <div class="sl">¿Cuánto invertir?</div>
+        <input class="inp" type="number" value="10000" id="pa" style="margin-bottom:7px;font-size:14px;font-weight:700" oninput="pr()">
+        <input type="range" min="1000" max="100000" step="1000" value="10000" style="width:100%;accent-color:var(--green);margin-bottom:10px" oninput="document.getElementById('pa').value=this.value;pr()">
+        <div class="div"></div>
+        <div style="margin-bottom:6px"><div class="sl">Tokens a recibir</div><div style="font-size:16px;font-weight:700" id="pt">80</div></div>
+        <div style="margin-bottom:12px"><div class="sl">Retorno est./año</div><div style="font-size:16px;font-weight:700;color:var(--green)" id="pr2">$1,620</div></div>
+        <button class="btn btn-p" style="width:100%;font-size:12px" onclick="go('invest')">Invertir ahora</button>
+        <div style="text-align:center;font-size:10px;color:var(--text3);margin-top:7px">Sin comisiones ocultas</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== INVEST FLOW ======== -->
+<div class="screen" id="screen-invest">
+  <div style="padding:18px;max-width:400px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:18px">
+      <div class="sd sd-done" id="d1">1</div><div class="sl-line sl-done" id="l1"></div>
+      <div class="sd sd-active" id="d2">2</div><div class="sl-line" id="l2"></div>
+      <div class="sd sd-todo" id="d3">3</div><div class="sl-line" id="l3"></div>
+      <div class="sd sd-todo" id="d4">4</div>
+    </div>
+    <div class="fs" id="f1"><div class="card" style="margin-bottom:12px"><div style="font-size:14px;font-weight:600;margin-bottom:12px">¿Cuánto invertir?</div><input class="inp" type="number" value="10000" style="font-size:20px;font-weight:700;margin-bottom:10px"><input type="range" min="1000" max="100000" step="1000" value="10000" style="width:100%;accent-color:var(--green)"><div class="div"></div><div class="g2"><div><div class="sl">Tokens</div><div style="font-size:15px;font-weight:700">80</div></div><div><div class="sl">Retorno/año</div><div style="font-size:15px;font-weight:700;color:var(--green)">$1,620</div></div></div></div><button class="btn btn-p" style="width:100%" onclick="ns(2)">Continuar</button></div>
+    <div class="fs active" id="f2"><div style="font-size:14px;font-weight:600;margin-bottom:12px">Revisa y firma el contrato</div><div class="card" style="margin-bottom:10px;max-height:160px;overflow-y:auto"><div style="font-size:11px;color:var(--text2);line-height:1.7"><div style="font-weight:600;margin-bottom:5px;color:var(--text)">CONTRATO DE INVERSIÓN TOKENIZADA — PLIT</div>El presente contrato establece los términos de la inversión en bienes raíces tokenizados a través de la plataforma PLIT...<br><br><b>CLÁUSULA 1 — OBJETO</b><br>El inversor adquiere tokens que representan una fracción proporcional del inmueble "Torre Reforma 222"...<br><br><b>CLÁUSULA 2 — RENDIMIENTOS</b><br>Los rendimientos se distribuirán mensualmente. ROI proyectado: 16.2% anual...</div></div><div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;padding:9px;background:var(--bg3);border-radius:8px"><input type="checkbox" style="margin-top:2px"><label style="font-size:11px;color:var(--text2)">He leído y acepto los términos del contrato y el fideicomiso en garantía</label></div><button class="btn btn-p" style="width:100%;margin-bottom:8px" onclick="ns(3)">Firmar y continuar</button><button class="btn btn-gh" style="width:100%" onclick="ns(1)">Volver</button></div>
+    <div class="fs" id="f3"><div style="font-size:14px;font-weight:600;margin-bottom:12px">Método de pago</div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"><div class="card" style="border-color:var(--green);background:rgba(0,211,149,.05);cursor:pointer"><div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;background:rgba(0,211,149,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px">🏦</div><div><div style="font-size:13px;font-weight:500">SPEI</div><div style="font-size:11px;color:var(--text3)">Acreditación 15 min</div></div><div style="margin-left:auto;width:15px;height:15px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:9px;color:#0A0D12">✓</div></div></div><div class="card" style="cursor:pointer"><div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px">💳</div><div><div style="font-size:13px;font-weight:500">Tarjeta</div><div style="font-size:11px;color:var(--text3)">2.5% comisión bancaria</div></div></div></div></div><div class="card" style="margin-bottom:12px"><div style="font-size:11px;color:var(--text2);line-height:1.9">Banco: STP · CLABE: 646180123456789012<br>Ref: INV-TOR-8821 · Monto: <b>$10,000.00 MXN</b></div></div><button class="btn btn-p" style="width:100%;margin-bottom:8px" onclick="ns(4)">Confirmar pago</button><button class="btn btn-gh" style="width:100%" onclick="ns(2)">Volver</button></div>
+    <div class="fs" id="f4"><div style="text-align:center;padding:16px 0"><div style="width:56px;height:56px;border-radius:50%;background:rgba(0,211,149,.15);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 10px;animation:pop .4s ease">✓</div><h2 style="font-size:17px;font-weight:700;margin-bottom:5px">¡Inversión realizada!</h2><p style="font-size:12px;color:var(--text3);margin-bottom:18px">Tus tokens llegarán en breve a tu wallet PLIT.</p></div><div class="card" style="margin-bottom:12px"><div class="sl">Resumen</div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px"><span style="color:var(--text3)">Propiedad</span><span style="font-weight:500">Torre Reforma 222</span></div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px"><span style="color:var(--text3)">Monto</span><span style="font-weight:500">$10,000 MXN</span></div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px"><span style="color:var(--text3)">Tokens</span><span style="font-weight:500;color:var(--green)">80 TREF</span></div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Primer rendimiento</span><span style="font-weight:500">1 Ago 2025</span></div></div><button class="btn btn-p" style="width:100%;margin-bottom:8px" onclick="go('dashboard')">Ver mi portafolio</button><button class="btn btn-gh" style="width:100%" onclick="go('explore')">Seguir explorando</button></div>
+  </div>
+</div>
+
+<!-- ======== PORTFOLIO ======== -->
+<div class="screen" id="screen-portfolio">
+  <div style="padding:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div><div style="font-size:15px;font-weight:600">Mi Portafolio</div><div style="font-size:12px;color:var(--text3)">5 inversiones activas</div></div><div style="text-align:right"><div style="font-size:20px;font-weight:700;color:var(--green)">$286,700</div><div style="font-size:11px;color:var(--green)">+$38,200 rendimientos</div></div></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="card" style="cursor:pointer" onclick="go('property')"><div style="display:flex;align-items:center;gap:11px"><div style="width:42px;height:42px;background:linear-gradient(135deg,#1a3a24,#0d2018);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏢</div><div style="flex:1"><div style="font-size:13px;font-weight:500;margin-bottom:1px">Torre Reforma 222</div><div style="font-size:11px;color:var(--text3)">720 tokens · CDMX</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:600">$89,200</div><div style="font-size:11px;color:var(--green)">+16.2%</div></div><button class="btn btn-gh btn-sm" style="margin-left:6px">Ver</button></div></div>
+      <div class="card" style="cursor:pointer"><div style="display:flex;align-items:center;gap:11px"><div style="width:42px;height:42px;background:linear-gradient(135deg,#1a2a3a,#0B1420);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏖️</div><div style="flex:1"><div style="font-size:13px;font-weight:500;margin-bottom:1px">Playa Mita Resort</div><div style="font-size:11px;color:var(--text3)">960 tokens · Nayarit</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:600">$120,000</div><div style="font-size:11px;color:var(--green)">+18.8%</div></div><button class="btn btn-gh btn-sm" style="margin-left:6px">Ver</button></div></div>
+      <div class="card" style="cursor:pointer"><div style="display:flex;align-items:center;gap:11px"><div style="width:42px;height:42px;background:linear-gradient(135deg,#2a1a3a,#14081A);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏙️</div><div style="flex:1"><div style="font-size:13px;font-weight:500;margin-bottom:1px">Monterrey Centro</div><div style="font-size:11px;color:var(--text3)">167 tokens · MTY</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:600">$39,300</div><div style="font-size:11px;color:var(--green)">+12.5%</div></div><button class="btn btn-gh btn-sm" style="margin-left:6px">Ver</button></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== UPLOAD ======== -->
+<div class="screen" id="screen-upload">
+  <div style="padding:18px;max-width:480px;margin:0 auto">
+    <div style="font-size:15px;font-weight:600;margin-bottom:3px">Tokenizar mi propiedad</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px">Proceso 100% digital · Respuesta en 48h</div>
+    <div style="display:flex;align-items:center;gap:5px;margin-bottom:18px">
+      <div class="sd sd-active">1</div><div class="sl-line"></div><div class="sd sd-todo">2</div><div class="sl-line"></div><div class="sd sd-todo">3</div><div class="sl-line"></div><div class="sd sd-todo">4</div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">Información básica</div>
+      <div style="margin-bottom:10px"><div class="sl" style="margin-bottom:4px">Dirección completa</div><input class="inp" placeholder="Av. Reforma 222, Santa Fe, CDMX"></div>
+      <div class="g2" style="margin-bottom:10px"><div><div class="sl" style="margin-bottom:4px">Superficie (m²)</div><input class="inp" placeholder="500"></div><div><div class="sl" style="margin-bottom:4px">Tipo</div><select class="inp" style="cursor:pointer"><option>Comercial</option><option>Residencial</option><option>Turístico</option></select></div></div>
+      <div><div class="sl" style="margin-bottom:4px">Fotos</div><div style="border:1.5px dashed var(--border2);border-radius:8px;padding:18px;text-align:center;cursor:pointer"><div style="font-size:20px;margin-bottom:4px">📷</div><div style="font-size:12px;color:var(--text3)">Arrastra fotos o haz clic</div><div style="font-size:10px;color:var(--text3);margin-top:2px">JPG, PNG hasta 10MB</div></div></div>
+    </div>
+    <button class="btn btn-p" style="width:100%;margin-bottom:8px">Continuar →</button>
+    <div style="text-align:center;font-size:11px;color:var(--text3)">Respaldado por fideicomiso · CNBV</div>
+  </div>
+</div>
+
+<!-- ======== ADMIN ======== -->
+<div class="screen" id="screen-admin">
+  <div style="padding:18px">
+    <div class="g3" style="margin-bottom:14px">
+      <div class="card" style="border-left:3px solid var(--green)"><div class="sl">Propiedades activas</div><div class="sv">24</div><div class="sc">+3 esta semana</div></div>
+      <div class="card" style="border-left:3px solid var(--blue)"><div class="sl">Inversiones</div><div class="sv">1,847</div><div class="sc">$48.2M gestionados</div></div>
+      <div class="card" style="border-left:3px solid var(--purple)"><div class="sl">Usuarios verificados</div><div class="sv">12,400</div><div class="sc">+120 este mes</div></div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><div class="sl" style="margin-bottom:0">Propiedades pendientes</div><div class="badge ba">5 por revisar</div></div>
+      <table class="admt"><thead><tr><th>Propiedad</th><th>Propietario</th><th>Valor</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+        <tr><td style="color:var(--text)">Torre Insurgentes</td><td>Carlos M.</td><td>$15.2M</td><td><span class="badge ba">Revisión</span></td><td style="display:flex;gap:4px"><button class="btn btn-p btn-sm">✓</button><button class="btn btn-gh btn-sm">✗</button></td></tr>
+        <tr><td style="color:var(--text)">Condesa Loft</td><td>María F.</td><td>$3.8M</td><td><span class="badge bb">Docs incompletos</span></td><td style="display:flex;gap:4px"><button class="btn btn-gh btn-sm">Editar</button><button class="btn btn-gh btn-sm">✗</button></td></tr>
+        <tr><td style="color:var(--text)">Cancún Beach Club</td><td>Grupo Sol</td><td>$42M</td><td><span class="badge bg">Listo</span></td><td style="display:flex;gap:4px"><button class="btn btn-p btn-sm">Publicar</button></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+
+  </div>
+</div>
+</div>
+
+<style>
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+</style>
+
+<script>
+function go(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  var nv=document.getElementById('nv-'+name);
+  if(nv)nv.classList.add('active');
+}
+
+function switchAuth(mode){
+  var fl=document.getElementById('form-login');
+  var fs=document.getElementById('form-signup');
+  var tl=document.getElementById('tab-login');
+  var ts=document.getElementById('tab-signup');
+  if(mode==='login'){
+    fl.style.display='block';fs.style.display='none';
+    tl.style.background='var(--card)';tl.style.color='var(--text)';tl.style.fontWeight='500';
+    ts.style.background='transparent';ts.style.color='var(--text2)';ts.style.fontWeight='400';
+  } else {
+    fl.style.display='none';fs.style.display='block';
+    ts.style.background='var(--card)';ts.style.color='var(--text)';ts.style.fontWeight='500';
+    tl.style.background='transparent';tl.style.color='var(--text2)';tl.style.fontWeight='400';
+  }
+}
+
+function selectRole(r){
+  ['inv','own','both'].forEach(function(id){
+    var el=document.getElementById('role-'+id);
+    if(id===r){
+      el.style.border='1px solid var(--green)';el.style.background='rgba(0,211,149,.08)';
+      el.querySelector('div:last-child').style.color='var(--green)';
+    } else {
+      el.style.border='1px solid var(--border)';el.style.background='transparent';
+      el.querySelector('div:last-child').style.color='var(--text2)';
+    }
+  });
+}
+
+function doLogin(){
+  var em=document.getElementById('email-inp').value;
+  var ps=document.getElementById('pass-inp').value;
+  if(em&&ps){go('dashboard');}
+  else{
+    var err=document.getElementById('login-err');
+    err.textContent='Por favor ingresa tu correo y contraseña';
+    err.style.color='#FCA5A5';err.style.display='block';
+  }
+}
+
+function pr(){
+  var a=parseFloat(document.getElementById('pa').value)||0;
+  document.getElementById('pt').textContent=Math.round(a/125).toLocaleString();
+  document.getElementById('pr2').textContent='$'+Math.round(a*0.162).toLocaleString()+' MXN';
+}
+
+function ns(s){
+  document.querySelectorAll('.fs').forEach(f=>f.classList.remove('active'));
+  document.getElementById('f'+s).classList.add('active');
+  for(var i=1;i<=4;i++){
+    var d=document.getElementById('d'+i);
+    d.className='sd '+(i<s?'sd-done':i===s?'sd-active':'sd-todo');
+    if(i<4){var l=document.getElementById('l'+i);l.className='sl-line'+(i<s?' sl-done':'');}
+  }
+}
+
+ns(2);
+</script>
